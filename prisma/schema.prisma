@@ -1,0 +1,167 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         Role     @default(PARENT)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  children      Child[]
+  notifications Notification[]
+
+  @@map("users")
+}
+
+enum Role {
+  PARENT
+  ADMIN
+}
+
+
+model Child {
+  id             String    @id @default(uuid())
+  parentId       String
+  parent         User      @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  name           String
+  age            Int
+  avatar         String    @default("🦊")
+  xp             Int       @default(0)
+  streak         Int       @default(0)
+  lastActiveDate DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  completions Completion[]
+  badges      ChildBadge[]
+
+  @@index([parentId])
+  @@map("children")
+}
+
+
+model Unit {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  order       Int
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  lessons Lesson[]
+
+  @@index([order])
+  @@map("units")
+}
+
+model Lesson {
+  id        String   @id @default(uuid())
+  unitId    String
+  unit      Unit     @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  title     String
+  order     Int
+  isPublished Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  exercises   Exercise[]
+  completions Completion[]
+
+  @@index([unitId, order])
+  @@map("lessons")
+}
+
+model Exercise {
+  id       String       @id @default(uuid())
+  lessonId String
+  lesson   Lesson       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  type     ExerciseType
+  prompt   String
+  // Options and the correct answer kept as JSON to support all four types
+  // without per-type sub-tables. Validated at the API layer.
+  options  Json
+  answer   String
+  order    Int          @default(0)
+
+  @@index([lessonId, order])
+  @@map("exercises")
+}
+
+enum ExerciseType {
+  PHONICS
+  HANDWRITING
+  SIGHT_WORD
+  VOCABULARY
+}
+
+
+model Completion {
+  id           String   @id @default(uuid())
+  childId      String
+  child        Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+  lessonId     String
+  lesson       Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  correctCount Int
+  totalCount   Int
+  stars        Int
+  xpGained     Int
+  durationSec  Int
+  completedAt  DateTime @default(now())
+
+  // A child can re-do a lesson, so we don't put a unique constraint on
+  // (childId, lessonId) — but we DO want fast lookups of "did this child
+  // ever complete this lesson?".
+  @@index([childId, lessonId])
+  @@index([childId, completedAt])
+  @@map("completions")
+}
+
+model Badge {
+  id          String       @id          // Stable string id like "first_lesson"
+  name        String
+  description String
+  emoji       String
+
+  awarded ChildBadge[]
+
+  @@map("badges")
+}
+
+model ChildBadge {
+  childId   String
+  child     Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+  badgeId   String
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  awardedAt DateTime @default(now())
+
+  @@id([childId, badgeId])
+  @@index([childId])
+  @@map("child_badges")
+}
+
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // 'achievement' | 'streak_at_risk' | 'weekly_summary'
+  title     String
+  body      String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+  @@map("notifications")
+}
