@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//-- AUTH --
+
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
@@ -28,7 +28,6 @@ enum Role {
   ADMIN
 }
 
-// -- LEARNERS --
 
 model Child {
   id             String    @id @default(uuid())
@@ -50,7 +49,6 @@ model Child {
   @@map("children")
 }
 
-// --- CURRICULUM -
 
 model Unit {
   id          String   @id @default(uuid())
@@ -90,6 +88,8 @@ model Exercise {
   lesson   Lesson       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   type     ExerciseType
   prompt   String
+  // Options and the correct answer kept as JSON to support all four types
+  // without per-type sub-tables. Validated at the API layer.
   options  Json
   answer   String
   order    Int          @default(0)
@@ -105,7 +105,6 @@ enum ExerciseType {
   VOCABULARY
 }
 
-// --- PROGRESS ---
 
 model Completion {
   id           String   @id @default(uuid())
@@ -120,6 +119,9 @@ model Completion {
   durationSec  Int
   completedAt  DateTime @default(now())
 
+  // A child can re-do a lesson, so we don't put a unique constraint on
+  // (childId, lessonId) — but we DO want fast lookups of "did this child
+  // ever complete this lesson?".
   @@index([childId, lessonId])
   @@index([childId, completedAt])
   @@map("completions")
@@ -148,7 +150,6 @@ model ChildBadge {
   @@map("child_badges")
 }
 
-//--- NOTIFICATIONS ---
 
 model Notification {
   id        String   @id @default(uuid())
