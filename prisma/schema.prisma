@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
@@ -26,8 +25,8 @@ model User {
 enum Role {
   PARENT
   ADMIN
+  CHILD
 }
-
 
 model Child {
   id             String    @id @default(uuid())
@@ -36,6 +35,7 @@ model Child {
   name           String
   age            Int
   avatar         String    @default("🦊")
+  pinHash        String?   // bcrypt hash of 4-digit PIN; null until parent sets it
   xp             Int       @default(0)
   streak         Int       @default(0)
   lastActiveDate DateTime?
@@ -48,7 +48,6 @@ model Child {
   @@index([parentId])
   @@map("children")
 }
-
 
 model Unit {
   id          String   @id @default(uuid())
@@ -105,7 +104,6 @@ enum ExerciseType {
   VOCABULARY
 }
 
-
 model Completion {
   id           String   @id @default(uuid())
   childId      String
@@ -119,9 +117,6 @@ model Completion {
   durationSec  Int
   completedAt  DateTime @default(now())
 
-  // A child can re-do a lesson, so we don't put a unique constraint on
-  // (childId, lessonId) — but we DO want fast lookups of "did this child
-  // ever complete this lesson?".
   @@index([childId, lessonId])
   @@index([childId, completedAt])
   @@map("completions")
