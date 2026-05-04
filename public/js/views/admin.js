@@ -1,5 +1,3 @@
-/* eslint-env browser */
-/* global API, UI, Views */
 (function () {
   const { h } = UI;
 
@@ -25,7 +23,6 @@
       h('div', { class: 'admin-columns' }, parentsPanel, childrenPanel),
     );
 
-    // Three independent sections — load in parallel so a slow one doesn't block the others.
     loadStats(statsGrid);
     loadParents(parentsPanel);
     loadChildren(childrenPanel);
