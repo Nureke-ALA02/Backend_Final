@@ -1,3 +1,5 @@
+/* eslint-env browser */
+/* global API, UI, Views */
 (function () {
   const { h } = UI;
 
@@ -5,14 +7,25 @@
     const statsGrid = h('div', { class: 'stats-grid' }, h('p', {}, 'Loading stats…'));
     const parentsPanel  = h('div', { class: 'admin-panel' }, h('h2', {}, 'Parents'),  h('p', {}, 'Loading…'));
     const childrenPanel = h('div', { class: 'admin-panel' }, h('h2', {}, 'Learners'), h('p', {}, 'Loading…'));
+
     const root = h('section', { class: 'admin-page' },
       h('div', { class: 'admin-header' },
-        h('h1', {}, 'Admin Panel'),
-        h('p', {}, 'Platform overview and learner progress.'),
+        h('div', {},
+          h('h1', {}, 'Admin Panel'),
+          h('p', {}, 'Platform overview and learner progress.'),
+        ),
+        h('div', { style: 'display:flex; gap:10px;' },
+          h('button', {
+            class: 'btn btn-primary',
+            onclick: () => location.hash = '/admin/curriculum',
+          }, '📖 Manage curriculum'),
+        ),
       ),
       statsGrid,
       h('div', { class: 'admin-columns' }, parentsPanel, childrenPanel),
     );
+
+    // Three independent sections — load in parallel so a slow one doesn't block the others.
     loadStats(statsGrid);
     loadParents(parentsPanel);
     loadChildren(childrenPanel);
@@ -59,17 +72,33 @@
 
       const tbody = h('tbody', {});
       for (const p of data.parents) {
+        const deleteBtn = h('button', {
+          class: 'admin-row-btn danger',
+          onclick: async () => {
+            if (!confirm(`Delete ${p.name} (${p.email}) and all their children? This is permanent.`)) return;
+            try {
+              await API.adminDeleteParent(p.id);
+              loadParents(container);  // reload
+            } catch (e) {
+              alert(e.message);
+            }
+          },
+        }, '🗑');
+
         tbody.appendChild(h('tr', {},
           h('td', {}, p.name),
           h('td', {}, p.email),
           h('td', {}, String(p.childCount)),
           h('td', {}, new Date(p.createdAt).toLocaleDateString()),
+          h('td', {}, deleteBtn),
         ));
       }
+
       container.appendChild(h('table', { class: 'admin-table' },
         h('thead', {}, h('tr', {},
           h('th', {}, 'Name'), h('th', {}, 'Email'),
           h('th', {}, 'Children'), h('th', {}, 'Joined'),
+          h('th', {}, ''),
         )),
         tbody,
       ));
@@ -77,6 +106,7 @@
       container.innerHTML = `<h2>Parents</h2><p style="color:#c0392b">${e.message}</p>`;
     }
   }
+
   async function loadChildren(container) {
     try {
       const data = await API.adminChildren({ page: 1 });
@@ -87,11 +117,25 @@
         container.appendChild(h('p', { class: 'empty' }, 'No learners yet.'));
         return;
       }
+
       const tbody = h('tbody', {});
       for (const c of data.children) {
         const bar = h('div', { class: 'mini-bar' },
           h('div', { class: 'mini-bar-fill', style: `width:${c.progressPct}%` }),
         );
+        const deleteBtn = h('button', {
+          class: 'admin-row-btn danger',
+          onclick: async () => {
+            if (!confirm(`Delete learner "${c.name}"? All progress will be lost.`)) return;
+            try {
+              await API.adminDeleteChild(c.id);
+              loadChildren(container);  // reload
+            } catch (e) {
+              alert(e.message);
+            }
+          },
+        }, '🗑');
+
         tbody.appendChild(h('tr', {},
           h('td', { class: 'avatar-cell' }, c.avatar),
           h('td', {}, c.name),
@@ -101,13 +145,17 @@
           h('td', {}, `🔥 ${c.streak}`),
           h('td', { class: 'progress-cell' }, bar, h('span', { class: 'muted' }, `${c.progressPct}%`)),
           h('td', {}, `🏅 ${c.badgeCount}`),
+          h('td', { class: 'muted' }, new Date(c.createdAt).toLocaleDateString()),
+          h('td', {}, deleteBtn),
         ));
       }
+
       container.appendChild(h('table', { class: 'admin-table' },
         h('thead', {}, h('tr', {},
           h('th', {}, ''), h('th', {}, 'Name'), h('th', {}, 'Age'),
           h('th', {}, 'Parent'), h('th', {}, 'XP'), h('th', {}, 'Streak'),
           h('th', {}, 'Progress'), h('th', {}, 'Badges'),
+          h('th', {}, 'Joined'), h('th', {}, ''),
         )),
         tbody,
       ));
@@ -115,5 +163,6 @@
       container.innerHTML = `<h2>Learners</h2><p style="color:#c0392b">${e.message}</p>`;
     }
   }
+
   Views.AdminPanel = AdminPanel;
 })();
