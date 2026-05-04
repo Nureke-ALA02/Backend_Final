@@ -1,5 +1,3 @@
-// Run with: npm run db:seed
-// Idempotent — re-running won't duplicate data.
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
 const prisma = new PrismaClient();
