@@ -28,6 +28,8 @@
         submit,
         h('div', { class: 'auth-switch' }, switchPrompt, ' ',
           h('a', { onclick: () => go(switchTo) }, switchLabel)),
+        h('div', { class: 'auth-switch', style: 'margin-top:8px;' }, 'Are you a kid? ',
+          h('a', { onclick: () => go('/kid-login') }, 'Tap here →')),
       ),
     );
   }
@@ -74,6 +76,7 @@
       },
     });
   }
+
   Views.Login = Login;
   Views.Register = Register;
 })();
