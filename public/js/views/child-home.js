@@ -1,16 +1,19 @@
 (function () {
   const { h } = UI;
-
+ 
   async function ChildHome(go, childId) {
     const root = h('section', { class: 'child-page' }, h('p', {}, 'Loading…'));
     try {
-      const child = await API.getChild(childId);
-      const { units } = await API.curriculumFor(childId);
+      const me = await API.me();
+      const isChildSession = me.role === 'CHILD';
 
+      const child = isChildSession ? me : await API.getChild(childId);
+      const { units } = await API.curriculumFor(childId);
+ 
       root.innerHTML = '';
       root.appendChild(
         h('div', { class: 'child-header' },
-          h('button', { class: 'child-back', onclick: () => go('/dashboard') }, '← Parents'),
+          isChildSession ? null : h('button', { class: 'child-back', onclick: () => go('/dashboard') }, '← Parents'),
           h('div', { class: 'avatar' }, child.avatar),
           h('div', {},
             h('h2', {}, `Hi, ${child.name}!`),
@@ -18,14 +21,14 @@
           ),
         )
       );
-
+ 
       for (const u of units) root.appendChild(unitBlock(u, childId, go));
     } catch (e) {
       root.innerHTML = `<p style="color:#c0392b; text-align:center; padding:40px;">${e.message}</p>`;
     }
     return root;
   }
-
+ 
   function unitBlock(u, childId, go) {
     const path = h('div', { class: 'lesson-path' });
     for (const l of u.lessons) {
@@ -38,7 +41,7 @@
         ),
       );
       if (l.status !== 'locked') {
-        node.addEventListener('click', () => go(`/lesson/${childId}/${l.id}`));
+        node.addEventListener('click', () => go(`/play/${childId}/lesson/${l.id}`));
       }
       path.appendChild(node);
     }
@@ -48,6 +51,6 @@
       path,
     );
   }
-
+ 
   Views.ChildHome = ChildHome;
 })();
