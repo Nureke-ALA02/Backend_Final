@@ -1,5 +1,9 @@
+/* eslint-env browser */
+/* global UI, Views */
 (function () {
   const { h } = UI;
+
+  // -------- HERO (top section) --------
   function Hero(go) {
     return h('section', { class: 'landing' },
       h('div', {},
@@ -9,10 +13,19 @@
           h('button', { class: 'btn btn-primary btn-big', onclick: () => go('/register') }, 'Start free'),
           h('button', { class: 'btn btn-ghost btn-big', onclick: () => go('/login') }, 'I already have an account'),
         ),
+        h('p', { style: 'margin-top:14px; color:#6b7280;' },
+          'Are you a kid? ',
+          h('a', {
+            style: 'color:#2d9cdb; font-weight:700; cursor:pointer;',
+            onclick: () => go('/kid-login'),
+          }, 'Tap here to play →'),
+        ),
       ),
       h('div', { class: 'landing-art' }, '🦊'),
     );
   }
+
+  // -------- FEATURES --------
   function Features() {
     const items = [
       { emoji: '🔤', title: 'Phonics first',
@@ -36,6 +49,8 @@
       ),
     );
   }
+
+  // -------- HOW IT WORKS --------
   function HowItWorks() {
     const steps = [
       { n: '1', title: 'Create a parent account',  text: 'Sign up in under a minute — just an email and password.' },
@@ -55,6 +70,8 @@
       ),
     );
   }
+
+  // -------- ABOUT --------
   function About() {
     return h('section', { class: 'lp-section', id: 'about' },
       h('div', { class: 'about-row' },
@@ -74,6 +91,8 @@
       ),
     );
   }
+
+  // -------- CALL TO ACTION (bottom) --------
   function FinalCTA(go) {
     return h('section', { class: 'lp-cta' },
       h('h2', {}, 'Ready to start the adventure?'),
@@ -83,6 +102,8 @@
       ),
     );
   }
+
+  // -------- FOOTER --------
   function Footer() {
     const year = new Date().getFullYear();
     return h('footer', { class: 'lp-footer' },
@@ -124,6 +145,7 @@
     return h('a', { class: 'lp-footer-link', href }, label);
   }
 
+  // -------- ROOT --------
   function Landing(go) {
     return h('div', { class: 'landing-root' },
       Hero(go),
