@@ -39,23 +39,36 @@ async function publicChild(childId) {
 
 router.get('/', authRequired, async (req, res, next) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+
     const list = await prisma.child.findMany({
       where: { parentId: req.userId },
       include: {
-        badges:      { select: { badgeId: true } },
+        badges: { select: { badgeId: true } },
         completions: { select: { lessonId: true }, distinct: ['lessonId'] },
       },
       orderBy: { createdAt: 'asc' },
+      skip: (page - 1) * limit,
+      take: limit,
     });
+
     res.json({
       children: list.map((c) => ({
-        id: c.id, name: c.name, age: c.age, avatar: c.avatar,
-        xp: c.xp, streak: c.streak, lastActiveDate: c.lastActiveDate,
+        id: c.id,
+        name: c.name,
+        age: c.age,
+        avatar: c.avatar,
+        xp: c.xp,
+        streak: c.streak,
+        lastActiveDate: c.lastActiveDate,
         completedLessons: c.completions.map((x) => x.lessonId),
         badges: c.badges.map((x) => x.badgeId),
       })),
     });
-  } catch (e) { next(e); }
+  } catch (e) {
+    next(e);
+  }
 });
 
 router.post('/', authRequired, async (req, res, next) => {
