@@ -19,6 +19,7 @@ function buildApp() {
   app.use('/api/v1', curriculumRoutes);
   app.use('/api/v1/admin', adminRoutes);
   app.use('/api/v1/admin', adminCrudRoutes);
+  app.use('/api/v1/leaderboard', leaderboardRoutes);
 
   app.get('/api/v1/health', (req, res) => {
     res.json({ ok: true });
