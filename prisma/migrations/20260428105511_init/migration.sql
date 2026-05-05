@@ -1,10 +1,7 @@
--- CreateEnum
 CREATE TYPE "Role" AS ENUM ('PARENT', 'ADMIN');
 
--- CreateEnum
 CREATE TYPE "ExerciseType" AS ENUM ('PHONICS', 'HANDWRITING', 'SIGHT_WORD', 'VOCABULARY');
 
--- CreateTable
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
@@ -17,7 +14,6 @@ CREATE TABLE "users" (
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "children" (
     "id" TEXT NOT NULL,
     "parentId" TEXT NOT NULL,
@@ -33,7 +29,6 @@ CREATE TABLE "children" (
     CONSTRAINT "children_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "units" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
@@ -46,7 +41,6 @@ CREATE TABLE "units" (
     CONSTRAINT "units_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "lessons" (
     "id" TEXT NOT NULL,
     "unitId" TEXT NOT NULL,
@@ -59,7 +53,6 @@ CREATE TABLE "lessons" (
     CONSTRAINT "lessons_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "exercises" (
     "id" TEXT NOT NULL,
     "lessonId" TEXT NOT NULL,
@@ -72,7 +65,6 @@ CREATE TABLE "exercises" (
     CONSTRAINT "exercises_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "completions" (
     "id" TEXT NOT NULL,
     "childId" TEXT NOT NULL,
@@ -87,7 +79,6 @@ CREATE TABLE "completions" (
     CONSTRAINT "completions_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "badges" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -97,7 +88,6 @@ CREATE TABLE "badges" (
     CONSTRAINT "badges_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
 CREATE TABLE "child_badges" (
     "childId" TEXT NOT NULL,
     "badgeId" TEXT NOT NULL,
@@ -106,7 +96,6 @@ CREATE TABLE "child_badges" (
     CONSTRAINT "child_badges_pkey" PRIMARY KEY ("childId","badgeId")
 );
 
--- CreateTable
 CREATE TABLE "notifications" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
