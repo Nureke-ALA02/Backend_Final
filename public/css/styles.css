@@ -1,9 +1,3 @@
-/* ============================================================
-   ReadyABC — single stylesheet
-   Child-facing screens: bright, rounded, large, animated.
-   Parent screens: calmer, neutral palette.
-   ============================================================ */
-
 :root {
   --c-red:    #ff5a5f;
   --c-blue:   #2d9cdb;
@@ -36,6 +30,7 @@ html, body {
 
 button { font-family: inherit; cursor: pointer; }
 .hidden { display: none !important; }
+
 .topbar {
   display: flex;
   justify-content: space-between;
@@ -50,6 +45,7 @@ button { font-family: inherit; cursor: pointer; }
 .brand-name { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 22px; color: var(--c-blue); }
 .topbar-right { display: flex; gap: 14px; align-items: center; }
 .parent-name { color: var(--c-muted); font-weight: 700; }
+
 .btn {
   border: none; border-radius: var(--radius-sm);
   padding: 12px 22px; font-weight: 700; font-size: 16px;
@@ -66,6 +62,7 @@ button { font-family: inherit; cursor: pointer; }
   box-shadow: var(--shadow-soft);
 }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
+
 .landing {
   min-height: 100vh;
   display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px;
@@ -98,6 +95,7 @@ button { font-family: inherit; cursor: pointer; }
   .landing { grid-template-columns: 1fr; padding: 40px 24px; }
   .landing-art { font-size: 140px; }
 }
+
 .auth-wrap {
   min-height: calc(100vh - 60px);
   display: grid; place-items: center; padding: 40px 20px;
@@ -126,6 +124,7 @@ button { font-family: inherit; cursor: pointer; }
 .auth-card .btn { width: 100%; margin-top: 6px; }
 .auth-switch { text-align: center; margin-top: 18px; color: var(--c-muted); }
 .auth-switch a { color: var(--c-blue); font-weight: 700; cursor: pointer; }
+
 .parent-page { max-width: 1100px; margin: 40px auto; padding: 0 24px; }
 .parent-page h1 { font-family: 'Fredoka', sans-serif; font-size: 36px; margin: 0 0 24px; }
 .kid-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 18px; }
@@ -157,6 +156,7 @@ button { font-family: inherit; cursor: pointer; }
 .add-kid:hover { border-color: var(--c-blue); color: var(--c-blue); }
 .empty-state { text-align: center; padding: 60px 20px; color: var(--c-muted); }
 .empty-state .emoji { font-size: 80px; }
+
 .child-page {
   min-height: calc(100vh - 60px);
   background:
@@ -206,6 +206,7 @@ button { font-family: inherit; cursor: pointer; }
 .lesson-node.locked .lesson-icon { background: var(--c-line); }
 .lesson-info h4 { margin: 0; font-size: 18px; font-family: 'Fredoka', sans-serif; }
 .lesson-info p { margin: 2px 0 0; color: var(--c-muted); font-size: 14px; }
+
 .lesson-page {
   min-height: 100vh;
   background:
@@ -256,6 +257,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .feedback.ok   { color: var(--c-green); }
 .feedback.bad  { color: var(--c-red); }
+
 .results {
   max-width: 480px; margin: 60px auto; padding: 40px;
   background: white; border-radius: var(--radius-lg); text-align: center;
@@ -287,6 +289,7 @@ button { font-family: inherit; cursor: pointer; }
 .badge-popup .emoji { font-size: 48px; }
 .badge-popup h4 { margin: 6px 0 2px; font-family: 'Fredoka', sans-serif; }
 .badge-popup p  { margin: 0; color: var(--c-muted); font-size: 14px; }
+
 .celebrate-layer {
   position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 100;
 }
@@ -396,7 +399,6 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 .landing-root { display: block; }
-
 .landing-root .landing { min-height: auto; padding-top: 60px; padding-bottom: 60px; }
 .lp-section {
   padding: 70px 8vw;
@@ -511,7 +513,6 @@ button { font-family: inherit; cursor: pointer; }
 }
 .lp-cta p { color: var(--c-muted); font-size: 18px; margin: 0 0 28px; }
 .landing-cta.center { justify-content: center; display: flex; }
-
 .lp-footer {
   background: #1f2937;
   color: #d1d5db;
@@ -563,4 +564,208 @@ button { font-family: inherit; cursor: pointer; }
 }
 @media (max-width: 480px) {
   .lp-footer-grid { grid-template-columns: 1fr; }
+}
+.kid-login-page {
+  min-height: calc(100vh - 60px);
+  display: grid; place-items: center; padding: 40px 20px;
+  background:
+    radial-gradient(900px 500px at 50% -10%, #ffe4b6 0%, transparent 70%),
+    var(--c-cream);
+}
+.kid-login-shell { width: 100%; max-width: 480px; }
+.kid-login-card {
+  background: white; border-radius: var(--radius-lg);
+  padding: 36px; box-shadow: var(--shadow-pop); text-align: center;
+}
+.kid-login-card h2 {
+  font-family: 'Fredoka', sans-serif; font-size: 32px; margin: 0 0 6px;
+}
+.kid-login-card .sub { color: var(--c-muted); margin-bottom: 24px; }
+.kid-login-card .field { text-align: left; }
+.kid-mascot {
+  font-size: 80px; margin-bottom: 8px;
+  animation: bob 4s ease-in-out infinite;
+}
+
+.pin-input {
+  font-family: 'Fredoka', sans-serif !important;
+  font-size: 32px !important;
+  letter-spacing: 16px;
+  text-align: center;
+}
+
+.kid-pick-card-wrap {
+  background: white; border-radius: var(--radius-lg);
+  padding: 36px; box-shadow: var(--shadow-pop); text-align: center;
+}
+.kid-pick-card-wrap h2 {
+  font-family: 'Fredoka', sans-serif; font-size: 30px; margin: 0 0 6px;
+}
+.kid-pick-card-wrap .sub { color: var(--c-muted); margin-bottom: 24px; }
+
+.kid-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+.kid-pick-card {
+  background: var(--c-cream);
+  border: 3px solid var(--c-line);
+  border-radius: var(--radius-md);
+  padding: 18px 12px;
+  cursor: pointer;
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+}
+.kid-pick-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--c-blue);
+  box-shadow: var(--shadow-soft);
+}
+.kid-pick-avatar {
+  font-size: 60px;
+  line-height: 1;
+}
+.kid-pick-avatar.big { font-size: 80px; margin-bottom: 12px; }
+.kid-pick-name {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 18px;
+  margin: 6px 0 2px;
+}
+.kid-pick-age { color: var(--c-muted); font-size: 13px; margin-bottom: 6px; }
+.kid-pick-lock {
+  font-size: 12px; font-weight: 700;
+  color: var(--c-muted);
+  background: white;
+  padding: 4px 8px;
+  border-radius: 999px;
+  display: inline-block;
+}
+.kid-pick-lock.open { color: var(--c-green); }
+
+.kid-actions {
+  display: flex; gap: 8px; margin-top: 12px;
+  border-top: 1px solid var(--c-line);
+  padding-top: 12px;
+}
+.kid-action-btn {
+  flex: 1;
+  font-size: 14px !important;
+  padding: 8px 12px !important;
+  border: 1px solid var(--c-line) !important;
+  background: white !important;
+  color: var(--c-ink) !important;
+}
+.kid-action-btn:hover { background: var(--c-cream) !important; }
+.kid-action-btn.danger {
+  color: var(--c-red) !important;
+  border-color: #fecaca !important;
+}
+.kid-action-btn.danger:hover { background: #fff0f1 !important; }
+
+.pin-warning {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: #fff8e6;
+  border: 1px solid #ffe5a0;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: #92651a;
+}
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+.admin-row-btn {
+  background: white;
+  border: 1px solid var(--c-line);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 4px;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.admin-row-btn:hover { background: var(--c-cream); border-color: var(--c-blue); color: var(--c-blue); }
+.admin-row-btn.danger {
+  color: var(--c-red);
+  border-color: #fecaca;
+}
+.admin-row-btn.danger:hover { background: #fff0f1; }
+.admin-tree {
+  background: white;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-md);
+  padding: 12px;
+}
+.tree-unit { margin-bottom: 10px; border: 1px solid var(--c-line); border-radius: var(--radius-sm); overflow: hidden; }
+.tree-lesson { margin: 6px 0; border-left: 3px solid var(--c-line); padding-left: 8px; }
+.tree-exercise {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; margin: 4px 0 4px 28px;
+  background: var(--c-cream); border-radius: 8px;
+  font-size: 14px;
+}
+
+.tree-head {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: background .12s;
+}
+.tree-head:hover { background: var(--c-cream); }
+.tree-head.sub { padding: 8px 12px; background: #fafbfc; }
+.tree-head.sub:hover { background: var(--c-cream); }
+
+.tree-toggle { color: var(--c-muted); font-size: 12px; width: 14px; }
+.tree-icon { font-size: 18px; }
+.tree-title { font-weight: 700; }
+.tree-meta { color: var(--c-muted); font-size: 13px; }
+.tree-actions {
+  display: flex; gap: 6px; margin-left: auto;
+}
+.tree-body { padding: 0 12px 8px 12px; }
+
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(31, 41, 55, 0.55);
+  display: grid; place-items: center;
+  padding: 20px;
+  animation: fadeIn .15s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  width: 100%; max-width: 540px;
+  max-height: 90vh; overflow-y: auto;
+  box-shadow: var(--shadow-pop);
+}
+.modal-card h2 {
+  font-family: 'Fredoka', sans-serif;
+  margin: 0 0 18px; font-size: 24px;
+}
+.modal-card textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font-family: 'Nunito', monospace;
+  font-size: 14px;
+  border: 2px solid var(--c-line);
+  border-radius: var(--radius-sm);
+  resize: vertical;
+}
+.modal-card select {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px;
+  border: 2px solid var(--c-line);
+  border-radius: var(--radius-sm);
+  background: white;
+}
+.modal-actions {
+  display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px;
 }
