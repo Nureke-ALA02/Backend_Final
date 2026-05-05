@@ -2,10 +2,17 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 
 const prisma = require('../data/prisma');
-const { signAccessToken, authRequired } = require('../middleware/auth');
+const {
+  signUserToken,
+  signChildToken,
+  authRequired,
+} = require('../middleware/auth');
 
 const router = express.Router();
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PIN_RE = /^\d{4}$/;
+
+// ----- PARENT / ADMIN -----
 
 router.post('/register', async (req, res, next) => {
   try {
@@ -30,10 +37,10 @@ router.post('/register', async (req, res, next) => {
         passwordHash,
         name: name.trim(),
       },
-      select: { id: true, email: true, name: true },
+      select: { id: true, email: true, name: true, role: true },
     });
 
-    const token = signAccessToken(user.id);
+    const token = signUserToken(user.id, user.role);
     res.status(201).json({ token, user });
   } catch (e) { next(e); }
 });
@@ -51,7 +58,7 @@ router.post('/login', async (req, res, next) => {
     const ok = await bcrypt.compare(password, user.passwordHash);
     if (!ok) return res.status(401).json({ message: 'Invalid credentials' });
 
-    const token = signAccessToken(user.id);
+    const token = signUserToken(user.id, user.role);
     res.json({
       token,
       user: { id: user.id, email: user.email, name: user.name, role: user.role },
@@ -61,12 +68,88 @@ router.post('/login', async (req, res, next) => {
 
 router.get('/me', authRequired, async (req, res, next) => {
   try {
+    if (req.subjectRole === 'CHILD') {
+      const child = await prisma.child.findUnique({
+        where: { id: req.subjectId },
+        select: { id: true, name: true, age: true, avatar: true, xp: true, streak: true },
+      });
+      if (!child) return res.status(404).json({ message: 'Child not found' });
+      return res.json({ ...child, role: 'CHILD' });
+    }
+
     const user = await prisma.user.findUnique({
-      where: { id: req.userId },
+      where: { id: req.subjectId },
       select: { id: true, email: true, name: true, role: true },
     });
     if (!user) return res.status(404).json({ message: 'User not found' });
     res.json(user);
+  } catch (e) { next(e); }
+});
+
+// ----- CHILD LOGIN (Netflix-style flow) -----
+
+// 1) Parent's email is entered → backend returns the public list of children
+//    (name, avatar, age) so the kid can tap their card.
+//    Important: we DON'T leak whether the email exists — we always return an
+//    array (possibly empty) with a 200, to avoid email enumeration.
+router.get('/child-profiles', async (req, res, next) => {
+  try {
+    const email = String(req.query.email || '').toLowerCase().trim();
+    if (!EMAIL_RE.test(email)) {
+      return res.json({ children: [] });
+    }
+    const parent = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true, role: true },
+    });
+    if (!parent || parent.role !== 'PARENT') {
+      return res.json({ children: [] });
+    }
+    const children = await prisma.child.findMany({
+      where: { parentId: parent.id },
+      select: {
+        id: true, name: true, age: true, avatar: true,
+        // Don't ship pinHash. Client just needs to know whether a PIN is set.
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+    // We tell the client which children have a PIN set, so it can skip the PIN prompt
+    // when there's none yet (first-time login after profile creation).
+    const withPinFlag = await Promise.all(children.map(async (c) => {
+      const row = await prisma.child.findUnique({ where: { id: c.id }, select: { pinHash: true } });
+      return { ...c, hasPin: !!row.pinHash };
+    }));
+    res.json({ children: withPinFlag });
+  } catch (e) { next(e); }
+});
+
+// 2) Child taps a card → POSTs childId + pin (4 digits).
+router.post('/child-login', async (req, res, next) => {
+  try {
+    const { childId, pin } = req.body || {};
+    if (!childId) return res.status(422).json({ message: 'childId required' });
+
+    const child = await prisma.child.findUnique({
+      where: { id: childId },
+      select: { id: true, name: true, avatar: true, pinHash: true },
+    });
+    if (!child) return res.status(401).json({ message: 'Invalid login' });
+
+    // PIN required if one is set on the profile.
+    if (child.pinHash) {
+      if (!pin || !PIN_RE.test(String(pin))) {
+        return res.status(401).json({ message: 'Invalid PIN' });
+      }
+      const ok = await bcrypt.compare(String(pin), child.pinHash);
+      if (!ok) return res.status(401).json({ message: 'Invalid PIN' });
+    }
+    // If no PIN is set yet, login succeeds — the parent should set one in the dashboard.
+
+    const token = signChildToken(child.id);
+    res.json({
+      token,
+      child: { id: child.id, name: child.name, avatar: child.avatar, role: 'CHILD' },
+    });
   } catch (e) { next(e); }
 });
 
