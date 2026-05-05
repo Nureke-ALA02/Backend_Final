@@ -1,3 +1,5 @@
+/* eslint-env browser */
+/* global API, UI, Views */
 (function () {
   const { h, confettiBurst } = UI;
 
@@ -41,6 +43,8 @@
       feedbackEl.textContent = '';
       feedbackEl.className = 'feedback';
       nextBtn.disabled = true;
+
+      // Prisma returns enum types in uppercase ('VOCABULARY'). Compare case-insensitively.
       const isVocab = String(ex.type).toLowerCase() === 'vocabulary';
 
       for (const opt of ex.options) {
@@ -141,7 +145,7 @@
     root.appendChild(
       h('div', { style: 'margin-top:24px; display:flex; gap:10px; justify-content:center;' },
         h('button', { class: 'btn btn-ghost', onclick: () => go('/dashboard') }, 'Parent view'),
-        h('button', { class: 'btn btn-primary btn-big', onclick: () => go(`/child/${childId}`) }, 'Keep going'),
+        h('button', { class: 'btn btn-primary btn-big', onclick: () => go(`/play/${childId}`) }, 'Keep going'),
       )
     );
 
