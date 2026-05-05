@@ -1,3 +1,4 @@
+const notificationRoutes = require('./routes/notifications');
 const leaderboardRoutes = require('./routes/leaderboard');
 const path = require('path');
 const express = require('express');
