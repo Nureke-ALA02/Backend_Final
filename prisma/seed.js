@@ -82,7 +82,7 @@ async function main() {
   const passwordHash = await bcrypt.hash(ADMIN_PASSWORD, 10);
   await prisma.user.upsert({
     where:  { email: ADMIN_EMAIL.toLowerCase() },
-    update: { role: 'ADMIN', name: ADMIN_NAME }, // don't reset password on re-seed
+    update: { role: 'ADMIN', name: ADMIN_NAME },
     create: {
       email: ADMIN_EMAIL.toLowerCase(),
       passwordHash,
@@ -132,3 +132,4 @@ async function main() {
 main()
   .catch((e) => { console.error(e); process.exit(1); })
   .finally(() => prisma.$disconnect());
+
