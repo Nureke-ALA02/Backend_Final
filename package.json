@@ -1,6 +1,6 @@
 {
   "name": "readyabc",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Children's literacy learning platform — Express + PostgreSQL",
   "main": "src/server.js",
   "scripts": {
@@ -10,7 +10,12 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
     "db:seed": "node prisma/seed.js",
-    "db:reset": "prisma migrate reset --force"
+    "db:reset": "prisma migrate reset --force",
+    "test": "jest",
+    "test:unit": "jest --selectProjects unit",
+    "test:integration": "jest --selectProjects integration",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
@@ -23,7 +28,10 @@
     "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
-    "prisma": "^5.22.0"
+    "@playwright/test": "^1.48.0",
+    "jest": "^29.7.0",
+    "prisma": "^5.22.0",
+    "supertest": "^7.0.0"
   },
   "engines": {
     "node": ">=18"
