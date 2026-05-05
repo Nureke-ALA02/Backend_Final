@@ -21,6 +21,7 @@ function buildApp() {
   app.use('/api/v1/admin', adminRoutes);
   app.use('/api/v1/admin', adminCrudRoutes);
   app.use('/api/v1/leaderboard', leaderboardRoutes);
+  app.use('/api/v1/notifications', notificationRoutes);
 
   app.get('/api/v1/health', (req, res) => {
     res.json({ ok: true });
