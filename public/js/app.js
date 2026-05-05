@@ -8,21 +8,23 @@
 
   let currentUser = null;
 
-  function go(path) {
-    location.hash = '#' + path;
-  }
+  function go(path) { location.hash = '#' + path; }
 
-  // Where should this user land after auth?
   function homeFor(user) {
-    return user && user.role === 'ADMIN' ? '/admin' : '/dashboard';
+    if (!user) return '/';
+    if (user.role === 'ADMIN')  return '/admin';
+    if (user.role === 'CHILD')  return `/play/${user.id}`;
+    return '/dashboard';
   }
 
   function setUser(user) {
     currentUser = user;
     if (user) {
       topbar.classList.remove('hidden');
-      const tag = user.role === 'ADMIN' ? ' (admin)' : '';
-      parentNameEl.textContent = `Hi, ${user.name}${tag}`;
+      let label = `Hi, ${user.name}`;
+      if (user.role === 'ADMIN') label += ' (admin)';
+      if (user.role === 'CHILD') label = `${user.avatar || ''} ${user.name}`;
+      parentNameEl.textContent = label;
     } else {
       topbar.classList.add('hidden');
       parentNameEl.textContent = '';
@@ -35,7 +37,6 @@
     go('/');
   });
 
-  // Brand click → home if logged in, else landing
   document.querySelector('.brand').addEventListener('click', () => {
     go(currentUser ? homeFor(currentUser) : '/');
   });
@@ -73,20 +74,49 @@
       if (user) return go(homeFor(user));
       return appEl.appendChild(Views.Register(go, (u) => { setUser(u); go(homeFor(u)); }));
     }
+    if (path === '/kid-login') {
+      if (user) return go(homeFor(user));
+      return appEl.appendChild(Views.KidLogin(go, (childUser) => { setUser(childUser); go(homeFor(childUser)); }));
+    }
 
     // ---- Auth-required routes below ----
     if (!user) return go('/login');
 
-    // Admin route — admins only
+    // Admin routes — admins only
     if (path === '/admin') {
-      if (user.role !== 'ADMIN') return go('/dashboard');
+      if (user.role !== 'ADMIN') return go(homeFor(user));
       const node = await Views.AdminPanel(go);
       return appEl.appendChild(node);
     }
+    if (path === '/admin/curriculum') {
+      if (user.role !== 'ADMIN') return go(homeFor(user));
+      const node = await Views.AdminCurriculum(go);
+      return appEl.appendChild(node);
+    }
 
-    // Parent routes — admins shouldn't be in here, redirect them to /admin
+    // Admins shouldn't be on parent or play routes
     if (user.role === 'ADMIN') return go('/admin');
 
+    // Child play routes
+    let m;
+    if ((m = path.match(/^\/play\/([^/]+)$/))) {
+      const childId = m[1];
+      // Children can only play their own profile
+      if (user.role === 'CHILD' && user.id !== childId) return go(homeFor(user));
+      const node = await Views.ChildHome(go, childId);
+      return appEl.appendChild(node);
+    }
+    if ((m = path.match(/^\/play\/([^/]+)\/lesson\/([^/]+)$/))) {
+      const childId = m[1];
+      if (user.role === 'CHILD' && user.id !== childId) return go(homeFor(user));
+      const node = await Views.LessonView(go, childId, m[2]);
+      return appEl.appendChild(node);
+    }
+
+    // Children are blocked from parent dashboard / edit routes
+    if (user.role === 'CHILD') return go(homeFor(user));
+
+    // ---- Parent routes ----
     if (path === '/dashboard') {
       const node = await Views.Dashboard(go);
       return appEl.appendChild(node);
@@ -94,14 +124,8 @@
     if (path === '/child/new') {
       return appEl.appendChild(Views.AddChild(go));
     }
-
-    let m;
-    if ((m = path.match(/^\/child\/([^/]+)$/))) {
-      const node = await Views.ChildHome(go, m[1]);
-      return appEl.appendChild(node);
-    }
-    if ((m = path.match(/^\/lesson\/([^/]+)\/([^/]+)$/))) {
-      const node = await Views.LessonView(go, m[1], m[2]);
+    if ((m = path.match(/^\/child\/([^/]+)\/edit$/))) {
+      const node = await Views.EditChild(go, m[1]);
       return appEl.appendChild(node);
     }
 
