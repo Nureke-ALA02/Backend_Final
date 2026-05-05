@@ -1,3 +1,4 @@
+const adminLogsRoutes = require('./routes/adminLogs');
 const notificationRoutes = require('./routes/notifications');
 const leaderboardRoutes = require('./routes/leaderboard');
 const path = require('path');
