@@ -108,56 +108,38 @@ CREATE TABLE "notifications" (
     CONSTRAINT "notifications_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
--- CreateIndex
 CREATE INDEX "children_parentId_idx" ON "children"("parentId");
 
--- CreateIndex
 CREATE INDEX "units_order_idx" ON "units"("order");
 
--- CreateIndex
 CREATE INDEX "lessons_unitId_order_idx" ON "lessons"("unitId", "order");
 
--- CreateIndex
 CREATE INDEX "exercises_lessonId_order_idx" ON "exercises"("lessonId", "order");
 
--- CreateIndex
 CREATE INDEX "completions_childId_lessonId_idx" ON "completions"("childId", "lessonId");
 
--- CreateIndex
 CREATE INDEX "completions_childId_completedAt_idx" ON "completions"("childId", "completedAt");
 
--- CreateIndex
 CREATE INDEX "child_badges_childId_idx" ON "child_badges"("childId");
 
--- CreateIndex
 CREATE INDEX "notifications_userId_isRead_idx" ON "notifications"("userId", "isRead");
 
--- CreateIndex
 CREATE INDEX "notifications_userId_createdAt_idx" ON "notifications"("userId", "createdAt");
 
--- AddForeignKey
 ALTER TABLE "children" ADD CONSTRAINT "children_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
 ALTER TABLE "lessons" ADD CONSTRAINT "lessons_unitId_fkey" FOREIGN KEY ("unitId") REFERENCES "units"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
 ALTER TABLE "exercises" ADD CONSTRAINT "exercises_lessonId_fkey" FOREIGN KEY ("lessonId") REFERENCES "lessons"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
 ALTER TABLE "completions" ADD CONSTRAINT "completions_childId_fkey" FOREIGN KEY ("childId") REFERENCES "children"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
 ALTER TABLE "completions" ADD CONSTRAINT "completions_lessonId_fkey" FOREIGN KEY ("lessonId") REFERENCES "lessons"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
 ALTER TABLE "child_badges" ADD CONSTRAINT "child_badges_childId_fkey" FOREIGN KEY ("childId") REFERENCES "children"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
 ALTER TABLE "child_badges" ADD CONSTRAINT "child_badges_badgeId_fkey" FOREIGN KEY ("badgeId") REFERENCES "badges"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
--- AddForeignKey
 ALTER TABLE "notifications" ADD CONSTRAINT "notifications_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
