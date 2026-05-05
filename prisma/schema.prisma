@@ -35,7 +35,7 @@ model Child {
   name           String
   age            Int
   avatar         String    @default("🦊")
-  pinHash        String?   // bcrypt hash of 4-digit PIN; null until parent sets it
+  pinHash        String?   
   xp             Int       @default(0)
   streak         Int       @default(0)
   lastActiveDate DateTime?
@@ -87,8 +87,7 @@ model Exercise {
   lesson   Lesson       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   type     ExerciseType
   prompt   String
-  // Options and the correct answer kept as JSON to support all four types
-  // without per-type sub-tables. Validated at the API layer.
+
   options  Json
   answer   String
   order    Int          @default(0)
@@ -123,7 +122,7 @@ model Completion {
 }
 
 model Badge {
-  id          String       @id          // Stable string id like "first_lesson"
+  id          String       @id       
   name        String
   description String
   emoji       String
@@ -150,7 +149,7 @@ model Notification {
   id        String   @id @default(uuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type      String   // 'achievement' | 'streak_at_risk' | 'weekly_summary'
+  type      String  
   title     String
   body      String
   isRead    Boolean  @default(false)
