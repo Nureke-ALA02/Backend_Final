@@ -36,7 +36,11 @@ function buildApp() {
     console.error('[error]', err);
     res.status(err.status || 500).json({ message: err.publicMessage || 'Internal server error' });
   });
+  const cron = require('node-cron');
 
+  cron.schedule('0 0 * * *', () => {
+    console.log('Daily streak check...');
+});
   return app;
 }
 
