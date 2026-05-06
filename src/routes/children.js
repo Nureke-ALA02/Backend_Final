@@ -1,8 +1,15 @@
 const express = require('express');
+const bcrypt = require('bcryptjs');
+
 const prisma = require('../data/prisma');
-const { authRequired } = require('../middleware/auth');
+const { parentRequired } = require('../middleware/auth');
+
 const router = express.Router();
+
 const AVATARS = ['🦊', '🐻', '🐼', '🦁', '🐸', '🐯', '🐰', '🐨'];
+const PIN_RE = /^\d{4}$/;
+
+// Verify the requesting parent owns the child profile in :id.
 async function ownChild(req, res, next) {
   try {
     const child = await prisma.child.findUnique({ where: { id: req.params.id } });
@@ -15,6 +22,7 @@ async function ownChild(req, res, next) {
   } catch (e) { next(e); }
 }
 
+// Public-safe shape: include badge ids and completed lesson ids; never expose pinHash.
 async function publicChild(childId) {
   const child = await prisma.child.findUnique({
     where: { id: childId },
@@ -34,46 +42,38 @@ async function publicChild(childId) {
     lastActiveDate: child.lastActiveDate,
     completedLessons: child.completions.map((c) => c.lessonId),
     badges: child.badges.map((b) => b.badgeId),
+    hasPin: !!child.pinHash,
   };
 }
 
-router.get('/', authRequired, async (req, res, next) => {
+// ----- LIST -----
+router.get('/', parentRequired, async (req, res, next) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = 5;
-
     const list = await prisma.child.findMany({
       where: { parentId: req.userId },
       include: {
-        badges: { select: { badgeId: true } },
+        badges:      { select: { badgeId: true } },
         completions: { select: { lessonId: true }, distinct: ['lessonId'] },
       },
       orderBy: { createdAt: 'asc' },
-      skip: (page - 1) * limit,
-      take: limit,
     });
-
     res.json({
       children: list.map((c) => ({
-        id: c.id,
-        name: c.name,
-        age: c.age,
-        avatar: c.avatar,
-        xp: c.xp,
-        streak: c.streak,
-        lastActiveDate: c.lastActiveDate,
+        id: c.id, name: c.name, age: c.age, avatar: c.avatar,
+        xp: c.xp, streak: c.streak, lastActiveDate: c.lastActiveDate,
         completedLessons: c.completions.map((x) => x.lessonId),
         badges: c.badges.map((x) => x.badgeId),
+        hasPin: !!c.pinHash,
       })),
     });
-  } catch (e) {
-    next(e);
-  }
+  } catch (e) { next(e); }
 });
 
-router.post('/', authRequired, async (req, res, next) => {
+// ----- CREATE -----
+router.post('/', parentRequired, async (req, res, next) => {
   try {
-    const { name, age, avatar } = req.body || {};
+    const { name, age, avatar, pin } = req.body || {};
+
     if (!name || name.trim().length < 1) {
       return res.status(422).json({ message: 'Name is required' });
     }
@@ -83,25 +83,84 @@ router.post('/', authRequired, async (req, res, next) => {
     }
     const pickedAvatar = AVATARS.includes(avatar) ? avatar : AVATARS[0];
 
+    // PIN is optional at create time, but if provided must be 4 digits.
+    let pinHash = null;
+    if (pin !== undefined && pin !== null && pin !== '') {
+      if (!PIN_RE.test(String(pin))) {
+        return res.status(422).json({ message: 'PIN must be exactly 4 digits' });
+      }
+      pinHash = await bcrypt.hash(String(pin), 10);
+    }
+
     const created = await prisma.child.create({
       data: {
         parentId: req.userId,
         name: name.trim(),
         age: ageNum,
         avatar: pickedAvatar,
+        pinHash,
       },
     });
-    const result = await publicChild(created.id);
-    res.status(201).json(result);
+    res.status(201).json(await publicChild(created.id));
   } catch (e) { next(e); }
 });
 
-router.get('/:id', authRequired, ownChild, async (req, res, next) => {
+// ----- READ ONE -----
+router.get('/:id', parentRequired, ownChild, async (req, res, next) => {
   try {
     res.json(await publicChild(req.child.id));
   } catch (e) { next(e); }
 });
-router.delete('/:id', authRequired, ownChild, async (req, res, next) => {
+
+// ----- UPDATE -----
+// Allowed fields: name, age, avatar, pin (set/replace), removePin (clear)
+router.put('/:id', parentRequired, ownChild, async (req, res, next) => {
+  try {
+    const { name, age, avatar, pin, removePin } = req.body || {};
+    const data = {};
+
+    if (name !== undefined) {
+      if (!name || String(name).trim().length < 1) {
+        return res.status(422).json({ message: 'Name cannot be empty' });
+      }
+      data.name = String(name).trim();
+    }
+
+    if (age !== undefined) {
+      const ageNum = Number(age);
+      if (!Number.isInteger(ageNum) || ageNum < 3 || ageNum > 8) {
+        return res.status(422).json({ message: 'Age must be an integer between 3 and 8' });
+      }
+      data.age = ageNum;
+    }
+
+    if (avatar !== undefined) {
+      if (!AVATARS.includes(avatar)) {
+        return res.status(422).json({ message: 'Invalid avatar' });
+      }
+      data.avatar = avatar;
+    }
+
+    if (removePin === true) {
+      data.pinHash = null;
+    } else if (pin !== undefined && pin !== null && pin !== '') {
+      if (!PIN_RE.test(String(pin))) {
+        return res.status(422).json({ message: 'PIN must be exactly 4 digits' });
+      }
+      data.pinHash = await bcrypt.hash(String(pin), 10);
+    }
+
+    if (Object.keys(data).length === 0) {
+      return res.status(422).json({ message: 'No fields to update' });
+    }
+
+    await prisma.child.update({ where: { id: req.child.id }, data });
+    res.json(await publicChild(req.child.id));
+  } catch (e) { next(e); }
+});
+
+// ----- DELETE -----
+router.delete('/:id', parentRequired, ownChild, async (req, res, next) => {
   try {
     await prisma.child.delete({ where: { id: req.child.id } });
     res.status(204).end();

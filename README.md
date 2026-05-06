@@ -183,9 +183,17 @@ readyabc/
    ├─ index.html
    ├─ css/styles.css
    └─ js/
-      ├─ api.js
-      ├─ views.js
-      └─ app.js
+      ├─ api.js                 # fetch wrapper + token storage
+      ├─ app.js                 # hash router, role-based redirects
+      ├─ utils/
+      │  └─ dom.js              # shared h() helper + confetti
+      └─ views/                 # one file per screen
+         ├─ landing.js
+         ├─ auth.js             # Login + Register
+         ├─ dashboard.js        # Parent dashboard + AddChild
+         ├─ child-home.js       # Curriculum map
+         ├─ lesson.js           # Lesson + Results
+         └─ admin.js            # Admin panel
 ```
 
 ## Notes for the defence

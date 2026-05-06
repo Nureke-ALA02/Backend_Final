@@ -1,5 +1,9 @@
+/* eslint-env browser */
+/* global API, UI, Views */
 (function () {
   const { h } = UI;
+
+  // Tiny helper to keep the two forms consistent.
   function makeForm({ title, sub, fields, submitLabel, switchPrompt, switchLabel, switchTo, onSubmit, go }) {
     const errBox = h('div', { class: 'form-error hidden' });
     const inputs = fields.map((f) => h('input', { type: f.type, placeholder: f.placeholder, required: true, ...(f.minlength ? { minlength: f.minlength } : {}) }));

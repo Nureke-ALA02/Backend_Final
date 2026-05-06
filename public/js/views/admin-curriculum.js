@@ -1,3 +1,5 @@
+/* eslint-env browser */
+/* global API, UI, Views */
 (function () {
   const { h } = UI;
 
@@ -42,6 +44,8 @@
       treeContainer.innerHTML = `<p style="color:#c0392b">${e.message}</p>`;
     }
   }
+
+  // ---------------- UNIT ----------------
   function unitNode(unit, treeContainer) {
     let expanded = true;
 
@@ -87,6 +91,8 @@
     rerender();
     return wrap;
   }
+
+  // ---------------- LESSON ----------------
   function lessonNode(lesson, treeContainer) {
     let expanded = false;
     const head = h('div', { class: 'tree-head sub', onclick: () => { expanded = !expanded; rerender(); } });
@@ -131,6 +137,8 @@
     rerender();
     return wrap;
   }
+
+  // ---------------- EXERCISE ----------------
   function exerciseNode(ex, treeContainer) {
     const actions = h('div', { class: 'tree-actions' });
     actions.appendChild(h('button', {
@@ -155,6 +163,10 @@
       actions,
     );
   }
+
+  // ============================================================
+  // MODALS
+  // ============================================================
 
   function modal(title, fields, onSave) {
     const errBox = h('div', { class: 'form-error hidden' });

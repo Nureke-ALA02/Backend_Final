@@ -1,3 +1,9 @@
+/* ============================================================
+   ReadyABC — single stylesheet
+   Child-facing screens: bright, rounded, large, animated.
+   Parent screens: calmer, neutral palette.
+   ============================================================ */
+
 :root {
   --c-red:    #ff5a5f;
   --c-blue:   #2d9cdb;
@@ -31,6 +37,7 @@ html, body {
 button { font-family: inherit; cursor: pointer; }
 .hidden { display: none !important; }
 
+/* -------------------- TOPBAR -------------------- */
 .topbar {
   display: flex;
   justify-content: space-between;
@@ -46,6 +53,7 @@ button { font-family: inherit; cursor: pointer; }
 .topbar-right { display: flex; gap: 14px; align-items: center; }
 .parent-name { color: var(--c-muted); font-weight: 700; }
 
+/* -------------------- BUTTONS -------------------- */
 .btn {
   border: none; border-radius: var(--radius-sm);
   padding: 12px 22px; font-weight: 700; font-size: 16px;
@@ -63,6 +71,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
 
+/* -------------------- LANDING -------------------- */
 .landing {
   min-height: 100vh;
   display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px;
@@ -96,6 +105,7 @@ button { font-family: inherit; cursor: pointer; }
   .landing-art { font-size: 140px; }
 }
 
+/* -------------------- AUTH FORMS -------------------- */
 .auth-wrap {
   min-height: calc(100vh - 60px);
   display: grid; place-items: center; padding: 40px 20px;
@@ -125,6 +135,7 @@ button { font-family: inherit; cursor: pointer; }
 .auth-switch { text-align: center; margin-top: 18px; color: var(--c-muted); }
 .auth-switch a { color: var(--c-blue); font-weight: 700; cursor: pointer; }
 
+/* -------------------- DASHBOARD (PARENT) -------------------- */
 .parent-page { max-width: 1100px; margin: 40px auto; padding: 0 24px; }
 .parent-page h1 { font-family: 'Fredoka', sans-serif; font-size: 36px; margin: 0 0 24px; }
 .kid-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 18px; }
@@ -157,6 +168,7 @@ button { font-family: inherit; cursor: pointer; }
 .empty-state { text-align: center; padding: 60px 20px; color: var(--c-muted); }
 .empty-state .emoji { font-size: 80px; }
 
+/* -------------------- CURRICULUM MAP (CHILD) -------------------- */
 .child-page {
   min-height: calc(100vh - 60px);
   background:
@@ -207,6 +219,7 @@ button { font-family: inherit; cursor: pointer; }
 .lesson-info h4 { margin: 0; font-size: 18px; font-family: 'Fredoka', sans-serif; }
 .lesson-info p { margin: 2px 0 0; color: var(--c-muted); font-size: 14px; }
 
+/* -------------------- LESSON SCREEN -------------------- */
 .lesson-page {
   min-height: 100vh;
   background:
@@ -258,6 +271,7 @@ button { font-family: inherit; cursor: pointer; }
 .feedback.ok   { color: var(--c-green); }
 .feedback.bad  { color: var(--c-red); }
 
+/* -------------------- RESULTS -------------------- */
 .results {
   max-width: 480px; margin: 60px auto; padding: 40px;
   background: white; border-radius: var(--radius-lg); text-align: center;
@@ -290,6 +304,7 @@ button { font-family: inherit; cursor: pointer; }
 .badge-popup h4 { margin: 6px 0 2px; font-family: 'Fredoka', sans-serif; }
 .badge-popup p  { margin: 0; color: var(--c-muted); font-size: 14px; }
 
+/* -------------------- CONFETTI -------------------- */
 .celebrate-layer {
   position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 100;
 }
@@ -301,6 +316,8 @@ button { font-family: inherit; cursor: pointer; }
 @keyframes fall {
   to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
 }
+
+/* -------------------- ADMIN PANEL -------------------- */
 .admin-page {
   max-width: 1200px;
   margin: 0 auto;
@@ -398,8 +415,17 @@ button { font-family: inherit; cursor: pointer; }
   transition: width .4s ease;
 }
 
+/* ============================================================
+   LANDING PAGE — extended sections
+   Hero stays bright (kids), lower sections are calmer (parents).
+   ============================================================ */
+
 .landing-root { display: block; }
+
+/* Override hero so it's not min-height: 100vh anymore — there's content below it */
 .landing-root .landing { min-height: auto; padding-top: 60px; padding-bottom: 60px; }
+
+/* Section base */
 .lp-section {
   padding: 70px 8vw;
   background: white;
@@ -420,6 +446,8 @@ button { font-family: inherit; cursor: pointer; }
   max-width: 640px;
   margin: 0 auto 40px;
 }
+
+/* Features */
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -443,6 +471,8 @@ button { font-family: inherit; cursor: pointer; }
   margin: 0 0 8px;
 }
 .feature-card p { color: var(--c-muted); font-size: 15px; line-height: 1.5; margin: 0; }
+
+/* How it works */
 .steps-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -477,6 +507,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .step-card p { color: var(--c-muted); font-size: 15px; line-height: 1.5; margin: 0; }
 
+/* About */
 .about-row {
   display: grid;
   grid-template-columns: 1fr 1.4fr;
@@ -499,6 +530,8 @@ button { font-family: inherit; cursor: pointer; }
 @media (max-width: 800px) {
   .about-row { grid-template-columns: 1fr; gap: 24px; }
 }
+
+/* Final CTA */
 .lp-cta {
   padding: 70px 8vw;
   text-align: center;
@@ -513,6 +546,8 @@ button { font-family: inherit; cursor: pointer; }
 }
 .lp-cta p { color: var(--c-muted); font-size: 18px; margin: 0 0 28px; }
 .landing-cta.center { justify-content: center; display: flex; }
+
+/* Footer */
 .lp-footer {
   background: #1f2937;
   color: #d1d5db;
@@ -565,6 +600,10 @@ button { font-family: inherit; cursor: pointer; }
 @media (max-width: 480px) {
   .lp-footer-grid { grid-template-columns: 1fr; }
 }
+
+/* ============================================================
+   KID LOGIN PAGE
+   ============================================================ */
 .kid-login-page {
   min-height: calc(100vh - 60px);
   display: grid; place-items: center; padding: 40px 20px;
@@ -643,6 +682,9 @@ button { font-family: inherit; cursor: pointer; }
 }
 .kid-pick-lock.open { color: var(--c-green); }
 
+/* ============================================================
+   PARENT DASHBOARD — kid action buttons + PIN warning
+   ============================================================ */
 .kid-actions {
   display: flex; gap: 8px; margin-top: 12px;
   border-top: 1px solid var(--c-line);
@@ -672,12 +714,18 @@ button { font-family: inherit; cursor: pointer; }
   font-size: 13px;
   color: #92651a;
 }
+
+/* ============================================================
+   ADMIN HEADER
+   ============================================================ */
 .admin-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 20px;
 }
+
+/* Action button in admin tables / trees */
 .admin-row-btn {
   background: white;
   border: 1px solid var(--c-line);
@@ -695,6 +743,10 @@ button { font-family: inherit; cursor: pointer; }
   border-color: #fecaca;
 }
 .admin-row-btn.danger:hover { background: #fff0f1; }
+
+/* ============================================================
+   ADMIN CURRICULUM TREE
+   ============================================================ */
 .admin-tree {
   background: white;
   border: 1px solid var(--c-line);
@@ -729,6 +781,9 @@ button { font-family: inherit; cursor: pointer; }
 }
 .tree-body { padding: 0 12px 8px 12px; }
 
+/* ============================================================
+   MODAL
+   ============================================================ */
 .modal-overlay {
   position: fixed; inset: 0; z-index: 1000;
   background: rgba(31, 41, 55, 0.55);

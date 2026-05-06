@@ -1,4 +1,8 @@
+/* eslint-env browser */
+// Tiny shared helpers used by all views.
+// Exposed as window.UI so individual view files can grab them.
 (function () {
+  // h(tag, attrs, ...children) — minimal hyperscript-style DOM builder.
   function h(tag, attrs = {}, ...children) {
     const el = document.createElement(tag);
     for (const [k, v] of Object.entries(attrs || {})) {
