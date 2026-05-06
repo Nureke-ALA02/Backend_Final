@@ -5,7 +5,7 @@ const prisma = require('./data/prisma');
 const app = buildApp();
 const PORT = process.env.PORT || 3000;
 
-// SPA catch-all → index.html for client-side routing (only set up in real server, not in tests)
+
 app.get(/^\/(?!api\/).*/, (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });

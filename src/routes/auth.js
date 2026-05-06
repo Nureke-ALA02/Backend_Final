@@ -12,7 +12,7 @@ const router = express.Router();
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PIN_RE = /^\d{4}$/;
 
-// ----- PARENT / ADMIN -----
+
 
 router.post('/register', async (req, res, next) => {
   try {
@@ -86,12 +86,6 @@ router.get('/me', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// ----- CHILD LOGIN (Netflix-style flow) -----
-
-// 1) Parent's email is entered → backend returns the public list of children
-//    (name, avatar, age) so the kid can tap their card.
-//    Important: we DON'T leak whether the email exists — we always return an
-//    array (possibly empty) with a 200, to avoid email enumeration.
 router.get('/child-profiles', async (req, res, next) => {
   try {
     const email = String(req.query.email || '').toLowerCase().trim();
@@ -109,12 +103,11 @@ router.get('/child-profiles', async (req, res, next) => {
       where: { parentId: parent.id },
       select: {
         id: true, name: true, age: true, avatar: true,
-        // Don't ship pinHash. Client just needs to know whether a PIN is set.
+      
       },
       orderBy: { createdAt: 'asc' },
     });
-    // We tell the client which children have a PIN set, so it can skip the PIN prompt
-    // when there's none yet (first-time login after profile creation).
+  
     const withPinFlag = await Promise.all(children.map(async (c) => {
       const row = await prisma.child.findUnique({ where: { id: c.id }, select: { pinHash: true } });
       return { ...c, hasPin: !!row.pinHash };
@@ -123,7 +116,6 @@ router.get('/child-profiles', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// 2) Child taps a card → POSTs childId + pin (4 digits).
 router.post('/child-login', async (req, res, next) => {
   try {
     const { childId, pin } = req.body || {};
@@ -135,7 +127,6 @@ router.post('/child-login', async (req, res, next) => {
     });
     if (!child) return res.status(401).json({ message: 'Invalid login' });
 
-    // PIN required if one is set on the profile.
     if (child.pinHash) {
       if (!pin || !PIN_RE.test(String(pin))) {
         return res.status(401).json({ message: 'Invalid PIN' });
@@ -143,7 +134,7 @@ router.post('/child-login', async (req, res, next) => {
       const ok = await bcrypt.compare(String(pin), child.pinHash);
       if (!ok) return res.status(401).json({ message: 'Invalid PIN' });
     }
-    // If no PIN is set yet, login succeeds — the parent should set one in the dashboard.
+  
 
     const token = signChildToken(child.id);
     res.json({

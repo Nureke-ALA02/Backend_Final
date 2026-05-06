@@ -11,9 +11,7 @@ const {
 
 const router = express.Router();
 
-// ----- helpers -----
 
-// Fetch full curriculum sorted, lessons sorted, exercises sorted.
 async function fetchCurriculum() {
   return prisma.unit.findMany({
     where:  { isPublished: true },
@@ -30,16 +28,12 @@ async function fetchCurriculum() {
   });
 }
 
-// Flat ordered lesson-id list across all units. Used for sequential unlock logic.
 function flattenLessonIds(units) {
   const out = [];
   for (const u of units) for (const l of u.lessons) out.push(l.id);
   return out;
 }
 
-// Verify the requester is allowed to act on this child:
-//   - PARENT/ADMIN: must own the child (parentId === userId, or be ADMIN)
-//   - CHILD: can only act on themselves (childId === their own subjectId)
 async function assertCanAccessChild(req, childId) {
   const child = await prisma.child.findUnique({ where: { id: childId } });
   if (!child) return { error: { status: 404, message: 'Child not found' } };
@@ -53,17 +47,13 @@ async function assertCanAccessChild(req, childId) {
   if (req.subjectRole === 'ADMIN') {
     return { child };
   }
-  // PARENT
+ 
   if (child.parentId !== req.userId) {
     return { error: { status: 403, message: 'Not your child profile' } };
   }
   return { child };
 }
 
-// ----- routes -----
-
-// GET /api/v1/children/:childId/curriculum
-// Returns units → lessons annotated with status: 'locked' | 'available' | 'completed'.
 router.get('/children/:childId/curriculum', authRequired, async (req, res, next) => {
   try {
     const { error, child } = await assertCanAccessChild(req, req.params.childId);
@@ -103,7 +93,7 @@ router.get('/children/:childId/curriculum', authRequired, async (req, res, next)
   } catch (e) { next(e); }
 });
 
-// GET /api/v1/lessons/:lessonId — exercises without the `answer` field
+
 router.get('/lessons/:lessonId', authRequired, async (req, res, next) => {
   try {
     const lesson = await prisma.lesson.findUnique({
@@ -121,9 +111,6 @@ router.get('/lessons/:lessonId', authRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// POST /api/v1/exercises/:exerciseId/submit
-//   body: { childId?, answer }
-//   childId is taken from the token if the requester is a CHILD
 router.post('/exercises/:exerciseId/submit', authRequired, async (req, res, next) => {
   try {
     const { answer } = req.body || {};
@@ -144,10 +131,7 @@ router.post('/exercises/:exerciseId/submit', authRequired, async (req, res, next
   } catch (e) { next(e); }
 });
 
-// POST /api/v1/lessons/:lessonId/complete
-//   body: { childId?, correctCount, totalCount, durationSec }
-//   childId is taken from the token if the requester is a CHILD.
-//   Wrapped in a transaction so XP / streak / badges update atomically.
+
 router.post('/lessons/:lessonId/complete', authRequired, async (req, res, next) => {
   try {
     const { correctCount = 0, totalCount = 1, durationSec = 0 } = req.body || {};
@@ -163,7 +147,6 @@ router.post('/lessons/:lessonId/complete', authRequired, async (req, res, next) 
     });
     if (!lesson) return res.status(404).json({ message: 'Lesson not found' });
 
-    // Pure helpers — see src/services/progress.js
     const stars = calculateStars(correctCount, totalCount);
     const xpGained = calculateXp(correctCount, stars);
     const today = new Date();
@@ -175,13 +158,12 @@ router.post('/lessons/:lessonId/complete', authRequired, async (req, res, next) 
     );
 
     const result = await prisma.$transaction(async (tx) => {
-      // Was the child already completed this lesson before?
       const prevCompletion = await tx.completion.findFirst({
         where: { childId, lessonId: lesson.id },
         select: { id: true },
       });
 
-      // Persist this attempt as a completion record
+
       await tx.completion.create({
         data: {
           childId,
@@ -194,7 +176,6 @@ router.post('/lessons/:lessonId/complete', authRequired, async (req, res, next) 
         },
       });
 
-      // Update child stats
       const updatedChild = await tx.child.update({
         where: { id: childId },
         data: {
@@ -204,14 +185,12 @@ router.post('/lessons/:lessonId/complete', authRequired, async (req, res, next) 
         },
       });
 
-      // Compute which badges to award now
       const earned = await tx.childBadge.findMany({
         where: { childId },
         select: { badgeId: true },
       });
       const earnedIds = new Set(earned.map((b) => b.badgeId));
 
-      // Unit champion: every lesson in this unit completed at least once
       const lessonIdsInUnit = lesson.unit.lessons.map((l) => l.id);
       const completionsInUnit = await tx.completion.findMany({
         where: { childId, lessonId: { in: lessonIdsInUnit } },
@@ -236,7 +215,6 @@ router.post('/lessons/:lessonId/complete', authRequired, async (req, res, next) 
         });
         newBadges = await tx.badge.findMany({ where: { id: { in: toAward } } });
 
-        // Notify the parent
         await tx.notification.createMany({
           data: newBadges.map((b) => ({
             userId: req.userId,
@@ -260,7 +238,6 @@ router.post('/lessons/:lessonId/complete', authRequired, async (req, res, next) 
   } catch (e) { next(e); }
 });
 
-// GET /api/v1/badges — full catalog
 router.get('/badges', authRequired, async (req, res, next) => {
   try {
     const badges = await prisma.badge.findMany();

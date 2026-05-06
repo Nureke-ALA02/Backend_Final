@@ -1,5 +1,3 @@
-/* eslint-env browser */
-/* global API, Views */
 (function () {
   const appEl = document.getElementById('app');
   const topbar = document.getElementById('topbar');
@@ -61,7 +59,6 @@
 
     const user = await ensureUser();
 
-    // ---- Public routes ----
     if (path === '/' || path === '') {
       if (user) return go(homeFor(user));
       return appEl.appendChild(Views.Landing(go));
@@ -79,10 +76,8 @@
       return appEl.appendChild(Views.KidLogin(go, (childUser) => { setUser(childUser); go(homeFor(childUser)); }));
     }
 
-    // ---- Auth-required routes below ----
     if (!user) return go('/login');
 
-    // Admin routes — admins only
     if (path === '/admin') {
       if (user.role !== 'ADMIN') return go(homeFor(user));
       const node = await Views.AdminPanel(go);
@@ -94,14 +89,11 @@
       return appEl.appendChild(node);
     }
 
-    // Admins shouldn't be on parent or play routes
     if (user.role === 'ADMIN') return go('/admin');
 
-    // Child play routes
     let m;
     if ((m = path.match(/^\/play\/([^/]+)$/))) {
       const childId = m[1];
-      // Children can only play their own profile
       if (user.role === 'CHILD' && user.id !== childId) return go(homeFor(user));
       const node = await Views.ChildHome(go, childId);
       return appEl.appendChild(node);
@@ -113,10 +105,8 @@
       return appEl.appendChild(node);
     }
 
-    // Children are blocked from parent dashboard / edit routes
     if (user.role === 'CHILD') return go(homeFor(user));
 
-    // ---- Parent routes ----
     if (path === '/dashboard') {
       const node = await Views.Dashboard(go);
       return appEl.appendChild(node);
@@ -129,7 +119,6 @@
       return appEl.appendChild(node);
     }
 
-    // 404
     appEl.appendChild(
       Object.assign(document.createElement('div'), {
         innerHTML: '<div style="padding:60px; text-align:center;"><h2>Page not found</h2><a href="#/dashboard">Back</a></div>',

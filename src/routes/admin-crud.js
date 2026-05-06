@@ -6,11 +6,6 @@ const { adminRequired } = require('../middleware/auth');
 const router = express.Router();
 router.use(adminRequired);
 
-// ===================================================================
-// UNITS
-// ===================================================================
-
-// POST /api/v1/admin/units
 router.post('/units', async (req, res, next) => {
   try {
     const { title, description, order, isPublished } = req.body || {};
@@ -29,7 +24,6 @@ router.post('/units', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// PUT /api/v1/admin/units/:id
 router.put('/units/:id', async (req, res, next) => {
   try {
     const { title, description, order, isPublished } = req.body || {};
@@ -50,8 +44,6 @@ router.put('/units/:id', async (req, res, next) => {
   }
 });
 
-// DELETE /api/v1/admin/units/:id
-// Cascade removes all child lessons + exercises (defined in the schema).
 router.delete('/units/:id', async (req, res, next) => {
   try {
     await prisma.unit.delete({ where: { id: req.params.id } });
@@ -62,18 +54,12 @@ router.delete('/units/:id', async (req, res, next) => {
   }
 });
 
-// ===================================================================
-// LESSONS
-// ===================================================================
-
-// POST /api/v1/admin/lessons
 router.post('/lessons', async (req, res, next) => {
   try {
     const { unitId, title, order, isPublished } = req.body || {};
     if (!unitId || !title) {
       return res.status(422).json({ message: 'unitId and title required' });
     }
-    // Make sure the unit exists before creating the lesson.
     const unit = await prisma.unit.findUnique({ where: { id: unitId } });
     if (!unit) return res.status(404).json({ message: 'Unit not found' });
 
@@ -89,7 +75,6 @@ router.post('/lessons', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// PUT /api/v1/admin/lessons/:id
 router.put('/lessons/:id', async (req, res, next) => {
   try {
     const { title, order, isPublished, unitId } = req.body || {};
@@ -110,7 +95,6 @@ router.put('/lessons/:id', async (req, res, next) => {
   }
 });
 
-// DELETE /api/v1/admin/lessons/:id
 router.delete('/lessons/:id', async (req, res, next) => {
   try {
     await prisma.lesson.delete({ where: { id: req.params.id } });
@@ -121,13 +105,9 @@ router.delete('/lessons/:id', async (req, res, next) => {
   }
 });
 
-// ===================================================================
-// EXERCISES
-// ===================================================================
 
 const VALID_TYPES = new Set(['PHONICS', 'HANDWRITING', 'SIGHT_WORD', 'VOCABULARY']);
 
-// POST /api/v1/admin/exercises
 router.post('/exercises', async (req, res, next) => {
   try {
     const { lessonId, type, prompt, options, answer, order } = req.body || {};
@@ -146,7 +126,7 @@ router.post('/exercises', async (req, res, next) => {
         lessonId,
         type: String(type).toUpperCase(),
         prompt: String(prompt).trim(),
-        options,         // JSON
+        options,         
         answer: String(answer),
         order: Number.isInteger(Number(order)) ? Number(order) : 0,
       },
@@ -155,7 +135,6 @@ router.post('/exercises', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// PUT /api/v1/admin/exercises/:id
 router.put('/exercises/:id', async (req, res, next) => {
   try {
     const { type, prompt, options, answer, order, lessonId } = req.body || {};
@@ -183,7 +162,6 @@ router.put('/exercises/:id', async (req, res, next) => {
   }
 });
 
-// DELETE /api/v1/admin/exercises/:id
 router.delete('/exercises/:id', async (req, res, next) => {
   try {
     await prisma.exercise.delete({ where: { id: req.params.id } });
@@ -194,9 +172,6 @@ router.delete('/exercises/:id', async (req, res, next) => {
   }
 });
 
-// ===================================================================
-// PARENTS — admin can delete a parent (cascades to children)
-// ===================================================================
 
 router.delete('/parents/:id', async (req, res, next) => {
   try {
@@ -216,9 +191,6 @@ router.delete('/parents/:id', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// ===================================================================
-// CHILDREN — admin can delete any child profile
-// ===================================================================
 
 router.delete('/children/:id', async (req, res, next) => {
   try {
@@ -229,9 +201,6 @@ router.delete('/children/:id', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// ===================================================================
-// FULL CONTENT TREE — convenience endpoint for the admin UI
-// ===================================================================
 
 router.get('/curriculum', async (req, res, next) => {
   try {

@@ -1,4 +1,3 @@
-/* eslint-env browser */
 (function () {
   const TOKEN_KEY = 'readyabc.token';
   const BASE = '/api/v1';
@@ -37,27 +36,23 @@
   window.API = {
     Auth,
 
-    // ---- AUTH ----
     register: (email, password, name) =>
       request('/auth/register', { method: 'POST', body: { email, password, name }, auth: false }),
     login: (email, password) =>
       request('/auth/login', { method: 'POST', body: { email, password }, auth: false }),
     me: () => request('/auth/me'),
 
-    // Child Netflix-style login
     childProfilesByEmail: (email) =>
       request(`/auth/child-profiles?email=${encodeURIComponent(email)}`, { auth: false }),
     childLogin: (childId, pin) =>
       request('/auth/child-login', { method: 'POST', body: { childId, pin }, auth: false }),
 
-    // ---- CHILDREN (parent CRUD) ----
     listChildren:  () => request('/children'),
     createChild:   (data) => request('/children', { method: 'POST', body: data }),
     updateChild:   (id, data) => request(`/children/${id}`, { method: 'PUT', body: data }),
     deleteChild:   (id) => request(`/children/${id}`, { method: 'DELETE' }),
     getChild:      (id) => request(`/children/${id}`),
 
-    // ---- CURRICULUM / PLAY ----
     curriculumFor: (childId) => request(`/children/${childId}/curriculum`),
     getLesson:     (lessonId) => request(`/lessons/${lessonId}`),
     submitAnswer:  (exerciseId, childId, answer) =>
@@ -66,15 +61,12 @@
                     request(`/lessons/${lessonId}/complete`, { method: 'POST', body: payload }),
     listBadges:    () => request('/badges'),
 
-    // ---- ADMIN — read ----
     adminStats:    () => request('/admin/stats'),
     adminParents:  ({ page = 1, search = '' } = {}) =>
                     request(`/admin/parents?page=${page}&search=${encodeURIComponent(search)}`),
     adminChildren: ({ page = 1 } = {}) =>
                     request(`/admin/children?page=${page}`),
     adminCurriculum: () => request('/admin/curriculum'),
-
-    // ---- ADMIN — content CRUD ----
     adminCreateUnit: (data) => request('/admin/units', { method: 'POST', body: data }),
     adminUpdateUnit: (id, data) => request(`/admin/units/${id}`, { method: 'PUT', body: data }),
     adminDeleteUnit: (id) => request(`/admin/units/${id}`, { method: 'DELETE' }),

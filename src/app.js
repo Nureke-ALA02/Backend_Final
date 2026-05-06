@@ -14,8 +14,7 @@ function buildApp() {
   app.use(express.json({ limit: '256kb' }));
  
   app.use('/api/v1/auth', authRoutes);
-  // curriculum first — it owns /children/:id/curriculum and allows CHILD tokens.
-  // children.js comes after; it owns the rest of /children/* and is parent-only.
+  
   app.use('/api/v1', curriculumRoutes);
   app.use('/api/v1/children', childrenRoutes);
   app.use('/api/v1/admin', adminRoutes);
@@ -27,7 +26,6 @@ function buildApp() {
  
   app.use(express.static(path.join(__dirname, '..', 'public')));
  
-  // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
     console.error('[error]', err);
     res.status(err.status || 500).json({ message: err.publicMessage || 'Internal server error' });

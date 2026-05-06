@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
-  <!-- Header (only when authenticated) -->
+
   <header id="topbar" class="topbar hidden">
     <div class="brand" data-route="/dashboard">
       <span class="brand-mark">📖</span>
@@ -24,10 +24,8 @@
 
   <main id="app"></main>
 
-  <!-- Confetti / celebration layer -->
   <div id="celebrate-layer" class="celebrate-layer" aria-hidden="true"></div>
 
-  <!-- Order matters: api + UI helpers first, then individual views, then router -->
   <script src="/js/api.js"></script>
   <script src="/js/utils/dom.js"></script>
   <script src="/js/views/landing.js"></script>

@@ -7,15 +7,12 @@
       const me = await API.me();
       const isChildSession = me.role === 'CHILD';
  
-      // Children: use their /me data (they don't have permission to call GET /children/:id).
-      // Parents: hit GET /children/:id for full info.
       const child = isChildSession ? me : await API.getChild(childId);
       const { units } = await API.curriculumFor(childId);
  
       root.innerHTML = '';
       root.appendChild(
         h('div', { class: 'child-header' },
-          // Only parents/admins see the "back to dashboard" button.
           isChildSession ? null : h('button', { class: 'child-back', onclick: () => go('/dashboard') }, '← Parents'),
           h('div', { class: 'avatar' }, child.avatar),
           h('div', {},

@@ -1,9 +1,6 @@
-/* eslint-env browser */
-/* global UI, Views */
 (function () {
   const { h } = UI;
 
-  // -------- HERO (top section) --------
   function Hero(go) {
     return h('section', { class: 'landing' },
       h('div', {},
@@ -25,7 +22,6 @@
     );
   }
 
-  // -------- FEATURES --------
   function Features() {
     const items = [
       { emoji: '🔤', title: 'Phonics first',
@@ -50,7 +46,6 @@
     );
   }
 
-  // -------- HOW IT WORKS --------
   function HowItWorks() {
     const steps = [
       { n: '1', title: 'Create a parent account',  text: 'Sign up in under a minute — just an email and password.' },
@@ -71,7 +66,6 @@
     );
   }
 
-  // -------- ABOUT --------
   function About() {
     return h('section', { class: 'lp-section', id: 'about' },
       h('div', { class: 'about-row' },
@@ -92,7 +86,6 @@
     );
   }
 
-  // -------- CALL TO ACTION (bottom) --------
   function FinalCTA(go) {
     return h('section', { class: 'lp-cta' },
       h('h2', {}, 'Ready to start the adventure?'),
@@ -103,7 +96,6 @@
     );
   }
 
-  // -------- FOOTER --------
   function Footer() {
     const year = new Date().getFullYear();
     return h('footer', { class: 'lp-footer' },
@@ -145,7 +137,6 @@
     return h('a', { class: 'lp-footer-link', href }, label);
   }
 
-  // -------- ROOT --------
   function Landing(go) {
     return h('div', { class: 'landing-root' },
       Hero(go),

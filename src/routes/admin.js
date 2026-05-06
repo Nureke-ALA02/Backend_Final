@@ -5,11 +5,8 @@ const { adminRequired } = require('../middleware/auth');
 
 const router = express.Router();
 
-// All admin routes require admin role.
 router.use(adminRequired);
 
-// ----- GET /api/v1/admin/stats -----
-// Platform-wide counts and "active today" metric.
 router.get('/stats', async (req, res, next) => {
   try {
     const startOfToday = new Date();
@@ -19,7 +16,6 @@ router.get('/stats', async (req, res, next) => {
     startOfWeek.setDate(startOfWeek.getDate() - 7);
     startOfWeek.setHours(0, 0, 0, 0);
 
-    // Run independent counts in parallel
     const [
       totalParents,
       totalAdmins,
@@ -42,20 +38,17 @@ router.get('/stats', async (req, res, next) => {
       prisma.childBadge.count(),
     ]);
 
-    // Average completion rate = avg of (distinct lessons completed per child / total lessons)
     let avgCompletionRate = 0;
     if (totalChildren > 0 && totalLessons > 0) {
       const distinctPerChild = await prisma.completion.groupBy({
         by: ['childId', 'lessonId'],
       });
-      // distinctPerChild has one row per (child, lesson). Count lessons per child.
       const perChild = new Map();
       for (const row of distinctPerChild) {
         perChild.set(row.childId, (perChild.get(row.childId) || 0) + 1);
       }
       let sum = 0;
       for (const c of perChild.values()) sum += c / totalLessons;
-      // children that never started count as 0
       avgCompletionRate = sum / totalChildren;
     }
 
@@ -78,8 +71,6 @@ router.get('/stats', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// ----- GET /api/v1/admin/parents -----
-// Paginated list of parent accounts with their child count.
 router.get('/parents', async (req, res, next) => {
   try {
     const page  = Math.max(1, parseInt(req.query.page, 10) || 1);
@@ -124,8 +115,6 @@ router.get('/parents', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// ----- GET /api/v1/admin/children -----
-// Paginated list of all children with progress summary.
 router.get('/children', async (req, res, next) => {
   try {
     const page  = Math.max(1, parseInt(req.query.page, 10) || 1);

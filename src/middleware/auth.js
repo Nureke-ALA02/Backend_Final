@@ -30,8 +30,7 @@ function authRequired(req, res, next) {
   try {
     const payload = jwt.verify(token, JWT_SECRET);
     req.subjectId = payload.sub;
-    req.subjectRole = payload.role || 'PARENT'; // legacy tokens default to parent
-    // Convenience: keep userId for routes that already use it
+    req.subjectRole = payload.role || 'PARENT';
     if (req.subjectRole !== 'CHILD') req.userId = payload.sub;
     next();
   } catch (e) {
@@ -39,8 +38,6 @@ function authRequired(req, res, next) {
   }
 }
 
-// Only parents (registered users with role=PARENT). Token role check first,
-// then we double-check in DB to prevent forged role claims (defense in depth).
 async function parentRequired(req, res, next) {
   authRequired(req, res, async () => {
     if (req.subjectRole === 'CHILD') {
@@ -61,7 +58,6 @@ async function parentRequired(req, res, next) {
   });
 }
 
-// Admins only. Token role check + DB check.
 async function adminRequired(req, res, next) {
   authRequired(req, res, async () => {
     if (req.subjectRole !== 'ADMIN') {
@@ -81,7 +77,6 @@ async function adminRequired(req, res, next) {
   });
 }
 
-// Children only — used to gate the play/learn endpoints.
 async function childRequired(req, res, next) {
   authRequired(req, res, async () => {
     if (req.subjectRole !== 'CHILD') {

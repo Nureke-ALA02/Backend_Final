@@ -9,7 +9,7 @@ const router = express.Router();
 const AVATARS = ['🦊', '🐻', '🐼', '🦁', '🐸', '🐯', '🐰', '🐨'];
 const PIN_RE = /^\d{4}$/;
 
-// Verify the requesting parent owns the child profile in :id.
+
 async function ownChild(req, res, next) {
   try {
     const child = await prisma.child.findUnique({ where: { id: req.params.id } });
@@ -22,7 +22,7 @@ async function ownChild(req, res, next) {
   } catch (e) { next(e); }
 }
 
-// Public-safe shape: include badge ids and completed lesson ids; never expose pinHash.
+
 async function publicChild(childId) {
   const child = await prisma.child.findUnique({
     where: { id: childId },
@@ -46,7 +46,7 @@ async function publicChild(childId) {
   };
 }
 
-// ----- LIST -----
+
 router.get('/', parentRequired, async (req, res, next) => {
   try {
     const list = await prisma.child.findMany({
@@ -69,7 +69,7 @@ router.get('/', parentRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// ----- CREATE -----
+
 router.post('/', parentRequired, async (req, res, next) => {
   try {
     const { name, age, avatar, pin } = req.body || {};
@@ -83,7 +83,7 @@ router.post('/', parentRequired, async (req, res, next) => {
     }
     const pickedAvatar = AVATARS.includes(avatar) ? avatar : AVATARS[0];
 
-    // PIN is optional at create time, but if provided must be 4 digits.
+    
     let pinHash = null;
     if (pin !== undefined && pin !== null && pin !== '') {
       if (!PIN_RE.test(String(pin))) {
@@ -105,15 +105,14 @@ router.post('/', parentRequired, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// ----- READ ONE -----
+
 router.get('/:id', parentRequired, ownChild, async (req, res, next) => {
   try {
     res.json(await publicChild(req.child.id));
   } catch (e) { next(e); }
 });
 
-// ----- UPDATE -----
-// Allowed fields: name, age, avatar, pin (set/replace), removePin (clear)
+
 router.put('/:id', parentRequired, ownChild, async (req, res, next) => {
   try {
     const { name, age, avatar, pin, removePin } = req.body || {};
@@ -159,7 +158,6 @@ router.put('/:id', parentRequired, ownChild, async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// ----- DELETE -----
 router.delete('/:id', parentRequired, ownChild, async (req, res, next) => {
   try {
     await prisma.child.delete({ where: { id: req.child.id } });

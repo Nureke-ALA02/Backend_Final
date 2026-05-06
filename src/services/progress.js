@@ -1,15 +1,7 @@
-// Pure functions for the lesson-completion logic.
-// No side effects, no DB calls — easy to unit-test.
+
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/**
- * Stars based on accuracy:
- *   100%        → 3 stars
- *   ≥ 70%       → 2 stars
- *   otherwise   → 1 star
- * Edge case: totalCount = 0 means no exercises — defensively returns 1.
- */
 function calculateStars(correctCount, totalCount) {
   if (totalCount <= 0) return 1;
   const accuracy = correctCount / totalCount;
@@ -18,29 +10,14 @@ function calculateStars(correctCount, totalCount) {
   return 1;
 }
 
-/**
- * XP per lesson:
- *   10 XP × correct answers + 5 XP bonus for a perfect run.
- */
 function calculateXp(correctCount, stars) {
   const base = correctCount * 10;
   const bonus = stars === 3 ? 5 : 0;
   return base + bonus;
 }
 
-/**
- * Streak update.
- *
- *   prevStreak      — child's current streak count
- *   prevActiveDate  — child.lastActiveDate (Date | null)
- *   today           — usually `new Date()` (passed in to make the function testable)
- *
- * Returns: { newStreak, touchLastActive }
- *   - touchLastActive=false means lastActiveDate stays as-is (already today)
- *   - touchLastActive=true  means caller should set lastActiveDate = today
- */
 function calculateStreak(prevStreak, prevActiveDate, today) {
-  // Compare calendar days, not 24h windows.
+ 
   const todayMid = new Date(today);
   todayMid.setHours(0, 0, 0, 0);
 
@@ -62,19 +39,6 @@ function calculateStreak(prevStreak, prevActiveDate, today) {
   return { newStreak: 1, touchLastActive: true };
 }
 
-/**
- * Decide which badge ids to award now.
- *
- *   ctx = {
- *     wasFirstCompletion,   // boolean: did this complete a lesson the child never finished before?
- *     totalXpAfter,         // number: child.xp AFTER xpGained was added
- *     streakAfter,          // number: child.streak AFTER streak update
- *     allUnitLessonsDone,   // boolean: every lesson in the same unit is now completed at least once
- *     alreadyEarnedIds,     // Set<string>: badge ids the child already has
- *   }
- *
- * Returns: string[] — ids of badges to award (does NOT include ones already earned).
- */
 function decideBadges(ctx) {
   const out = [];
   const has = (id) => ctx.alreadyEarnedIds.has(id);

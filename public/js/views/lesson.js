@@ -1,5 +1,3 @@
-/* eslint-env browser */
-/* global API, UI, Views */
 (function () {
   const { h, confettiBurst } = UI;
 

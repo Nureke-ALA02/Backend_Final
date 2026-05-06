@@ -1,10 +1,7 @@
-/* eslint-env browser */
-/* global API, UI, Views */
 (function () {
   const { h } = UI;
 
   function KidLogin(go, onAuth) {
-    // Step state: 'email' → 'pickChild' → 'pin'
     let step = 'email';
     let parentEmail = '';
     let children = [];
@@ -23,7 +20,6 @@
       if (step === 'pin')        return pinStep();
     }
 
-    // --- Step 1: parent's email ---
     function emailStep() {
       const errBox = h('div', { class: 'form-error hidden' });
       const emailIn = h('input', { type: 'email', placeholder: "parent's email", required: true });
@@ -65,7 +61,6 @@
       );
     }
 
-    // --- Step 2: pick a child card ---
     function pickChildStep() {
       const grid = h('div', { class: 'kid-card-grid' });
       for (const c of children) {
@@ -77,7 +72,6 @@
               if (c.hasPin) {
                 step = 'pin';
               } else {
-                // No PIN set → log in directly
                 doLogin(null);
                 return;
               }
@@ -102,8 +96,6 @@
         }, '← Back'),
       );
     }
-
-    // --- Step 3: PIN ---
     function pinStep() {
       const errBox = h('div', { class: 'form-error hidden' });
       const pinIn = h('input', {
@@ -137,8 +129,6 @@
           pinIn.focus();
         }
       }
-
-      // auto-focus
       setTimeout(() => pinIn.focus(), 50);
 
       return h('form', { class: 'kid-login-card', onsubmit: onSubmit },
