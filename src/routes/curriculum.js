@@ -11,7 +11,6 @@ const {
 
 const router = express.Router();
 
-
 async function fetchCurriculum() {
   return prisma.unit.findMany({
     where:  { isPublished: true },
@@ -47,7 +46,7 @@ async function assertCanAccessChild(req, childId) {
   if (req.subjectRole === 'ADMIN') {
     return { child };
   }
- 
+
   if (child.parentId !== req.userId) {
     return { error: { status: 403, message: 'Not your child profile' } };
   }
@@ -129,9 +128,7 @@ router.post('/exercises/:exerciseId/submit', authRequired, async (req, res, next
       correctAnswer: correct ? undefined : ex.answer,
     });
   } catch (e) { next(e); }
-});
-
-
+})
 router.post('/lessons/:lessonId/complete', authRequired, async (req, res, next) => {
   try {
     const { correctCount = 0, totalCount = 1, durationSec = 0 } = req.body || {};
@@ -147,6 +144,7 @@ router.post('/lessons/:lessonId/complete', authRequired, async (req, res, next) 
     });
     if (!lesson) return res.status(404).json({ message: 'Lesson not found' });
 
+    
     const stars = calculateStars(correctCount, totalCount);
     const xpGained = calculateXp(correctCount, stars);
     const today = new Date();
@@ -162,7 +160,6 @@ router.post('/lessons/:lessonId/complete', authRequired, async (req, res, next) 
         where: { childId, lessonId: lesson.id },
         select: { id: true },
       });
-
 
       await tx.completion.create({
         data: {
@@ -217,7 +214,7 @@ router.post('/lessons/:lessonId/complete', authRequired, async (req, res, next) 
 
         await tx.notification.createMany({
           data: newBadges.map((b) => ({
-            userId: req.userId,
+            userId: ownedChild.parentId,
             type: 'achievement',
             title: `${ownedChild.name} earned a badge!`,
             body: `${b.emoji} ${b.name} — ${b.description}`,
