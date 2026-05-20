@@ -824,3 +824,27 @@ button { font-family: inherit; cursor: pointer; }
 .modal-actions {
   display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px;
 }
+/* ===== Kid CTA — third button in landing hero ===== */
+.btn-kid-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--c-green);
+  color: white;
+  border: none;
+  transition: background .15s, transform .15s, box-shadow .15s;
+}
+.btn-kid-cta:hover {
+  background: #4ab058;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(88, 196, 104, 0.3);
+}
+.kid-cta-emoji {
+  font-size: 24px;
+  line-height: 1;
+}
+
+/* Make the CTA row wrap nicely on smaller screens */
+.landing-cta {
+  flex-wrap: wrap;
+}
