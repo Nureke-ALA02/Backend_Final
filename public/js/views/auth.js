@@ -35,48 +35,50 @@
     );
   }
 
-  function Login(go, onAuth) {
-    return makeForm({
-      go,
-      title: 'Welcome back',
-      sub: 'Log in to keep learning together.',
-      fields: [
-        { label: 'Email', type: 'email', placeholder: 'you@example.com' },
-        { label: 'Password', type: 'password', placeholder: '••••••' },
-      ],
-      submitLabel: 'Log in',
-      switchPrompt: 'New here?',
-      switchLabel: 'Create an account',
-      switchTo: '/register',
-      onSubmit: async ([email, password]) => {
-        const { token, user } = await API.login(email, password);
-        API.Auth.token = token;
-        onAuth(user);
-      },
-    });
-  }
+ function Login(go, onAuth) {
+  return makeForm({
+    go,
+    title: 'Welcome back',
+    sub: 'Log in to keep learning together.',
+    fields: [
+      { label: 'Email', type: 'email', placeholder: 'you@example.com' },
+      { label: 'Password', type: 'password', placeholder: '••••••' },
+    ],
+    submitLabel: 'Log in',
+    switchPrompt: 'New here?',
+    switchLabel: 'Create an account',
+    switchTo: '/register',
+    onSubmit: async ([email, password]) => {
+      const { token, user } = await API.login(email, password);
+      API.Auth.token = token;
+      Toast.success(`Welcome back, ${user.name}!`);    // ← добавь эту строку
+      onAuth(user);
+    },
+  });
+}
 
   function Register(go, onAuth) {
-    return makeForm({
-      go,
-      title: 'Hello, parent!',
-      sub: "Create an account to set up your child's learning.",
-      fields: [
-        { label: 'Your name', type: 'text', placeholder: 'Your name' },
-        { label: 'Email', type: 'email', placeholder: 'you@example.com' },
-        { label: 'Password', type: 'password', placeholder: 'At least 6 characters', minlength: '6' },
-      ],
-      submitLabel: 'Create account',
-      switchPrompt: 'Already a parent here?',
-      switchLabel: 'Log in',
-      switchTo: '/login',
-      onSubmit: async ([name, email, password]) => {
-        const { token, user } = await API.register(email, password, name);
-        API.Auth.token = token;
-        onAuth(user);
-      },
-    });
-  }
+  return makeForm({
+    go,
+    title: 'Hello, parent!',
+    sub: "Create an account to set up your child's learning.",
+    fields: [
+      { label: 'Your name', type: 'text', placeholder: 'Your name' },
+      { label: 'Email', type: 'email', placeholder: 'you@example.com' },
+      { label: 'Password', type: 'password', placeholder: 'At least 6 characters', minlength: '6' },
+    ],
+    submitLabel: 'Create account',
+    switchPrompt: 'Already a parent here?',
+    switchLabel: 'Log in',
+    switchTo: '/login',
+    onSubmit: async ([name, email, password]) => {
+      const { token, user } = await API.register(email, password, name);
+      API.Auth.token = token;
+      Toast.success(`Welcome to ReadyABC, ${user.name}!`);   // ← добавь
+      onAuth(user);
+    },
+  });
+}
 
   Views.Login = Login;
   Views.Register = Register;

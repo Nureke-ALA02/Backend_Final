@@ -61,16 +61,16 @@
       h('button', {
         class: 'btn btn-ghost kid-action-btn danger',
         onclick: async () => {
-          if (!confirm(`Delete ${c.name}? All progress will be lost.`)) return;
-          try {
-            await API.deleteChild(c.id);
-            // Re-render dashboard
-            location.hash = '';
-            setTimeout(() => { location.hash = '/dashboard'; }, 10);
-          } catch (e) {
-            alert(e.message);
-          }
-        },
+  if (!confirm(`Delete ${c.name}? All progress will be lost.`)) return;
+  try {
+    await API.deleteChild(c.id);
+    Toast.success(`${c.name} removed`);                  // ← добавь
+    location.hash = '';
+    setTimeout(() => { location.hash = '/dashboard'; }, 10);
+  } catch (e) {
+    Toast.error(e.message);                              // ← добавь
+  }
+},
       }, '🗑 Delete'),
     ));
 
@@ -82,19 +82,19 @@
   // ============================================================
   // ADD CHILD
   // ============================================================
-  function AddChild(go) {
-    return childForm(go, {
-      mode: 'create',
-      title: 'Add a child',
-      sub: 'Pick a name, age, avatar, and optional PIN.',
-      submitLabel: 'Add child',
-      onSubmit: async (data) => {
-        const child = await API.createChild(data);
-        go('/dashboard');
-        return child;
-      },
-    });
-  }
+ function AddChild(go) {
+  return childForm(go, {
+    mode: 'create',
+    title: 'Add a child',
+    sub: 'Pick a name, age, avatar, and optional PIN.',
+    submitLabel: 'Add child',
+    onSubmit: async (data) => {
+  await API.updateChild(childId, data);
+  Toast.success(`${existing.name} updated`);              // ← добавь
+  go('/dashboard');
+},
+  });
+}
   async function EditChild(go, childId) {
     let existing;
     try {

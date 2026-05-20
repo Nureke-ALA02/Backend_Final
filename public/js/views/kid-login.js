@@ -146,11 +146,12 @@
       );
     }
 
-    async function doLogin(pin) {
-      const { token, child } = await API.childLogin(chosenChild.id, pin);
-      API.Auth.token = token;
-      onAuth({ ...child, role: 'CHILD' });
-    }
+   async function doLogin(pin) {
+  const { token, child } = await API.childLogin(chosenChild.id, pin);
+  API.Auth.token = token;
+  Toast.success(`Hi, ${child.name}! Ready to learn?`);    // ← добавь
+  onAuth({ ...child, role: 'CHILD' });
+}
 
     render();
     return root;

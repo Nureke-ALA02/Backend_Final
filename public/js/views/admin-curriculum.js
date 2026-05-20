@@ -244,49 +244,61 @@
   }
 
   function openUnitModal(existing, onDone) {
-    const isEdit = !!existing;
-    modal(isEdit ? `Edit unit: ${existing.title}` : 'New unit', [
-      { key: 'title',       label: 'Title',       value: existing?.title || '' },
-      { key: 'description', label: 'Description', type: 'textarea', value: existing?.description || '' },
-      { key: 'order',       label: 'Order (number)', type: 'number', value: existing?.order || 0 },
-    ], async (data) => {
-      if (isEdit) await API.adminUpdateUnit(existing.id, data);
-      else        await API.adminCreateUnit(data);
-      onDone();
-    });
-  }
+  const isEdit = !!existing;
+  modal(isEdit ? `Edit unit: ${existing.title}` : 'New unit', [
+    { key: 'title',       label: 'Title',       value: existing?.title || '' },
+    { key: 'description', label: 'Description', type: 'textarea', value: existing?.description || '' },
+    { key: 'order',       label: 'Order (number)', type: 'number', value: existing?.order || 0 },
+  ], async (data) => {
+    if (isEdit) {
+      await API.adminUpdateUnit(existing.id, data);
+      Toast.success(`Unit "${data.title}" updated`);        // ← добавь
+    } else {
+      await API.adminCreateUnit(data);
+      Toast.success(`Unit "${data.title}" created`);        // ← добавь
+    }
+    onDone();
+  });
+}
 
-  function openLessonModal(existing, unitId, onDone) {
-    const isEdit = !!existing;
-    modal(isEdit ? `Edit lesson: ${existing.title}` : 'New lesson', [
-      { key: 'title', label: 'Title', value: existing?.title || '' },
-      { key: 'order', label: 'Order (number)', type: 'number', value: existing?.order || 0 },
-    ], async (data) => {
-      if (isEdit) {
-        await API.adminUpdateLesson(existing.id, data);
-      } else {
-        await API.adminCreateLesson({ ...data, unitId });
-      }
-      onDone();
-    });
-  }
+function openLessonModal(existing, unitId, onDone) {
+  const isEdit = !!existing;
+  modal(isEdit ? `Edit lesson: ${existing.title}` : 'New lesson', [
+    { key: 'title', label: 'Title', value: existing?.title || '' },
+    { key: 'order', label: 'Order (number)', type: 'number', value: existing?.order || 0 },
+  ], async (data) => {
+    if (isEdit) {
+      await API.adminUpdateLesson(existing.id, data);
+      Toast.success(`Lesson updated`);                       // ← добавь
+    } else {
+      await API.adminCreateLesson({ ...data, unitId });
+      Toast.success(`Lesson "${data.title}" created`);       // ← добавь
+    }
+    onDone();
+  });
+}
 
-  function openExerciseModal(existing, lessonId, onDone) {
-    const isEdit = !!existing;
-    modal(isEdit ? 'Edit exercise' : 'New exercise', [
-      { key: 'type', label: 'Type', type: 'select',
-        value: existing?.type || 'PHONICS',
-        options: TYPES.map((t) => ({ value: t, label: t })) },
-      { key: 'prompt', label: 'Prompt (question shown to child)', type: 'textarea', value: existing?.prompt || '' },
-      { key: 'options', label: 'Options (JSON array)', type: 'json', value: existing?.options || [] },
-      { key: 'answer',  label: 'Correct answer (string)', value: existing?.answer || '' },
-      { key: 'order',   label: 'Order (number)', type: 'number', value: existing?.order || 0 },
-    ], async (data) => {
-      if (isEdit) await API.adminUpdateExercise(existing.id, data);
-      else        await API.adminCreateExercise({ ...data, lessonId });
-      onDone();
-    });
-  }
+function openExerciseModal(existing, lessonId, onDone) {
+  const isEdit = !!existing;
+  modal(isEdit ? 'Edit exercise' : 'New exercise', [
+    { key: 'type', label: 'Type', type: 'select',
+      value: existing?.type || 'PHONICS',
+      options: TYPES.map((t) => ({ value: t, label: t })) },
+    { key: 'prompt', label: 'Prompt (question shown to child)', type: 'textarea', value: existing?.prompt || '' },
+    { key: 'options', label: 'Options (JSON array)', type: 'json', value: existing?.options || [] },
+    { key: 'answer',  label: 'Correct answer (string)', value: existing?.answer || '' },
+    { key: 'order',   label: 'Order (number)', type: 'number', value: existing?.order || 0 },
+  ], async (data) => {
+    if (isEdit) {
+      await API.adminUpdateExercise(existing.id, data);
+      Toast.success('Exercise updated');                     // ← добавь
+    } else {
+      await API.adminCreateExercise({ ...data, lessonId });
+      Toast.success('Exercise created');                     // ← добавь
+    }
+    onDone();
+  });
+}
 
   Views.AdminCurriculum = AdminCurriculum;
 })();

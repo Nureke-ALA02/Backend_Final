@@ -74,15 +74,16 @@
       for (const p of data.parents) {
         const deleteBtn = h('button', {
           class: 'admin-row-btn danger',
-          onclick: async () => {
-            if (!confirm(`Delete ${p.name} (${p.email}) and all their children? This is permanent.`)) return;
-            try {
-              await API.adminDeleteParent(p.id);
-              loadParents(container);  // reload
-            } catch (e) {
-              alert(e.message);
-            }
-          },
+         onclick: async () => {
+  if (!confirm(`Delete ${p.name} (${p.email}) and all their children? This is permanent.`)) return;
+  try {
+    await API.adminDeleteParent(p.id);
+    Toast.success(`${p.name} deleted`);                      // ← добавь
+    loadParents(container);
+  } catch (e) {
+    Toast.error(e.message);                                  // ← замени alert
+  }
+},
         }, '🗑');
 
         tbody.appendChild(h('tr', {},
@@ -125,15 +126,16 @@
         );
         const deleteBtn = h('button', {
           class: 'admin-row-btn danger',
-          onclick: async () => {
-            if (!confirm(`Delete learner "${c.name}"? All progress will be lost.`)) return;
-            try {
-              await API.adminDeleteChild(c.id);
-              loadChildren(container);  // reload
-            } catch (e) {
-              alert(e.message);
-            }
-          },
+         onclick: async () => {
+  if (!confirm(`Delete learner "${c.name}"? All progress will be lost.`)) return;
+  try {
+    await API.adminDeleteChild(c.id);
+    Toast.success(`Learner "${c.name}" deleted`);       
+    loadChildren(container);
+  } catch (e) {
+    Toast.error(e.message);                               
+  }
+},
         }, '🗑');
 
         tbody.appendChild(h('tr', {},
