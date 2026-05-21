@@ -10,12 +10,20 @@
   // ============================================================
   async function Dashboard(go) {
     const grid = h('div', { class: 'kid-grid' }, h('p', {}, 'Loading…'));
-    const root = h('section', { class: 'parent-page' },
-      h('h1', {}, 'Your learners'),
-      h('p', { style: 'color:#6b7280; margin-top:-12px; margin-bottom:20px;' },
+   const root = h('section', { class: 'parent-page' },
+  h('div', { style: 'display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:20px;' },
+    h('div', {},
+      h('h1', { style: 'margin:0;' }, 'Your learners'),
+      h('p', { style: 'color:#6b7280; margin:6px 0 0;' },
         "Each kid logs in separately so their progress stays their own."),
-      grid,
-    );
+    ),
+    h('button', {
+      class: 'btn btn-ghost',
+      onclick: () => go('/leaderboard'),
+    }, '🏆 Leaderboard'),
+  ),
+  grid,
+);
 
     try {
       const { children } = await API.listChildren();

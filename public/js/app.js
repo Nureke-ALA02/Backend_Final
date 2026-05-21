@@ -23,6 +23,10 @@
       if (user.role === 'ADMIN') label += ' (admin)';
       if (user.role === 'CHILD') label = `${user.avatar || ''} ${user.name}`;
       parentNameEl.textContent = label;
+      parentNameEl.style.cursor = 'pointer';
+parentNameEl.onclick = () => {
+  if (currentUser && currentUser.role !== 'CHILD') go('/profile');
+};
     } else {
       topbar.classList.add('hidden');
       parentNameEl.textContent = '';
@@ -118,6 +122,14 @@
     }
     if (path === '/child/new') {
       return appEl.appendChild(Views.AddChild(go));
+    }
+    if (path === '/profile') {
+  const node = await Views.Profile(go);
+  return appEl.appendChild(node);
+    }
+    if (path === '/leaderboard') {
+  const node = await Views.Leaderboard(go);
+  return appEl.appendChild(node);
     }
     if ((m = path.match(/^\/child\/([^/]+)\/edit$/))) {
       const node = await Views.EditChild(go, m[1]);

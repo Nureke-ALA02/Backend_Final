@@ -7,6 +7,8 @@ const childrenRoutes = require('./routes/children');
 const curriculumRoutes = require('./routes/curriculum');
 const adminRoutes = require('./routes/admin');
 const adminCrudRoutes = require('./routes/admin-crud');
+const parentsRoutes = require('./routes/parents');
+const leaderboardRoutes = require('./routes/leaderboard');
  
 function buildApp() {
   const app = express();
@@ -19,6 +21,8 @@ function buildApp() {
   app.use('/api/v1/children', childrenRoutes);
   app.use('/api/v1/admin', adminRoutes);
   app.use('/api/v1/admin', adminCrudRoutes);
+  app.use('/api/v1/parents', parentsRoutes);
+  app.use('/api/v1/leaderboard', leaderboardRoutes);
  
   app.get('/api/v1/health', (req, res) => {
     res.json({ ok: true });

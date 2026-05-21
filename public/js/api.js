@@ -52,6 +52,15 @@
     updateChild:   (id, data) => request(`/children/${id}`, { method: 'PUT', body: data }),
     deleteChild:   (id) => request(`/children/${id}`, { method: 'DELETE' }),
     getChild:      (id) => request(`/children/${id}`),
+    // ---- PARENT PROFILE ----
+getParent:    (id) => request(`/parents/${id}`),
+updateParent: (id, data) => request(`/parents/${id}`, { method: 'PUT', body: data }),
+
+leaderboard: ({ sortBy = 'xp', age = null, limit = 20 } = {}) => {
+  const params = new URLSearchParams({ sortBy, limit: String(limit) });
+  if (age) params.set('age', String(age));
+  return request(`/leaderboard?${params.toString()}`);
+},
 
     curriculumFor: (childId) => request(`/children/${childId}/curriculum`),
     getLesson:     (lessonId) => request(`/lessons/${lessonId}`),
