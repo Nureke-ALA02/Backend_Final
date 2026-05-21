@@ -1131,3 +1131,46 @@ button { font-family: inherit; cursor: pointer; }
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
+/* ===== Admin profile ===== */
+.admin-profile-layout {
+  display: grid;
+  grid-template-columns: 480px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .admin-profile-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-profile-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.admin-profile-stat-card {
+  background: white;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  text-align: center;
+  box-shadow: var(--shadow-soft);
+}
+.admin-profile-stat-card .stat-emoji {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+.admin-profile-stat-card .stat-value {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--c-ink);
+  line-height: 1;
+}
+.admin-profile-stat-card .stat-label {
+  font-size: 13px;
+  color: var(--c-muted);
+  margin-top: 4px;
+  font-weight: 700;
+}

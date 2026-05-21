@@ -97,6 +97,11 @@ parentNameEl.onclick = () => {
   const node = await Views.AdminLeaderboard(go);
   return appEl.appendChild(node);
 }
+if (path === '/admin/profile') {
+  if (user.role !== 'ADMIN') return go(homeFor(user));
+  const node = await Views.AdminProfile(go);
+  return appEl.appendChild(node);
+}
 
     if (user.role === 'ADMIN') return go('/admin');
 

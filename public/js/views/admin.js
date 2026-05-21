@@ -16,16 +16,19 @@
     ),
 
     h('div', { style: 'display:flex; gap:10px;' },
-      h('button', {
-        class: 'btn btn-ghost',
-        onclick: () => location.hash = '/admin/leaderboard',
-      }, '🏆 Leaderboard'),
-
-      h('button', {
-        class: 'btn btn-primary',
-        onclick: () => location.hash = '/admin/curriculum',
-      }, '📖 Manage curriculum'),
-    ),
+  h('button', {
+    class: 'btn btn-ghost',
+    onclick: () => location.hash = '/admin/leaderboard',
+  }, '🏆 Leaderboard'),
+  h('button', {
+    class: 'btn btn-ghost',
+    onclick: () => location.hash = '/admin/profile',
+  }, '⚙️ My profile'),
+  h('button', {
+    class: 'btn btn-primary',
+    onclick: () => location.hash = '/admin/curriculum',
+  }, '📖 Manage curriculum'),
+),
   ),
 
   statsGrid,
