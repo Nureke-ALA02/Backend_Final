@@ -1064,3 +1064,47 @@ button { font-family: inherit; cursor: pointer; }
     grid-template-columns: 1fr;
   }
 }
+/* ===== Profile page ===== */
+.profile-meta {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 18px;
+  padding: 14px 18px;
+  background: var(--c-cream);
+  border-radius: var(--radius-sm);
+}
+.profile-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.profile-meta-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-muted);
+  font-weight: 700;
+}
+.profile-meta-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--c-ink);
+}
+.profile-divider {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 24px 0 6px;
+  padding-top: 18px;
+  border-top: 1px solid var(--c-line);
+}
+.form-success {
+  background: #ecfdf5;
+  color: #047857;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+  font-weight: 700;
+}
