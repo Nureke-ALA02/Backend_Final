@@ -124,12 +124,17 @@ parentNameEl.onclick = () => {
       return appEl.appendChild(Views.AddChild(go));
     }
     if (path === '/profile') {
+<<<<<<< HEAD
   const node = await Views.Profile(go);
   return appEl.appendChild(node);
     }
     if (path === '/leaderboard') {
   const node = await Views.Leaderboard(go);
   return appEl.appendChild(node);
+=======
+      const node = await Views.Profile(go);
+      return appEl.appendChild(node);
+>>>>>>> 16d75dd7cd15e88b4b7499df16a72e6228c40f7c
     }
     if ((m = path.match(/^\/child\/([^/]+)\/edit$/))) {
       const node = await Views.EditChild(go, m[1]);

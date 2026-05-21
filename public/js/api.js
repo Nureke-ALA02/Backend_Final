@@ -62,6 +62,9 @@ leaderboard: ({ sortBy = 'xp', age = null, limit = 20 } = {}) => {
   return request(`/leaderboard?${params.toString()}`);
 },
 
+    getParent:    (id) => request(`/parents/${id}`),
+    updateParent: (id, data) => request(`/parents/${id}`, { method: 'PUT', body: data }),
+
     curriculumFor: (childId) => request(`/children/${childId}/curriculum`),
     getLesson:     (lessonId) => request(`/lessons/${lessonId}`),
     submitAnswer:  (exerciseId, childId, answer) =>
