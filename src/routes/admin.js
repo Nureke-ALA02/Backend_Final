@@ -162,4 +162,59 @@ router.get('/children', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
+// GET /api/v1/admin/leaderboard?sortBy=xp&age=5&limit=50
+// Returns ranked list of children. sortBy = xp | streak | badges
+router.get('/leaderboard', async (req, res, next) => {
+  try {
+    const sortBy = ['xp', 'streak', 'badges'].includes(req.query.sortBy)
+      ? req.query.sortBy
+      : 'xp';
+    const ageFilter = req.query.age ? Number(req.query.age) : null;
+    const limit = Math.min(Number(req.query.limit) || 100, 500);
+
+    const where = {};
+    if (ageFilter && ageFilter >= 3 && ageFilter <= 8) {
+      where.age = ageFilter;
+    }
+
+    const children = await prisma.child.findMany({
+      where,
+      include: {
+        parent: { select: { name: true } },
+        badges: { select: { badgeId: true } },
+      },
+    });
+
+    const rows = children.map((c) => ({
+      id: c.id,
+      name: c.name,
+      age: c.age,
+      avatar: c.avatar,
+      parentName: c.parent ? c.parent.name : '—',
+      xp: c.xp,
+      streak: c.streak,
+      badgeCount: c.badges.length,
+      lastActiveDate: c.lastActiveDate,
+    }));
+
+    rows.sort((a, b) => {
+      if (sortBy === 'streak') return b.streak - a.streak || b.xp - a.xp;
+      if (sortBy === 'badges') return b.badgeCount - a.badgeCount || b.xp - a.xp;
+      return b.xp - a.xp;
+    });
+
+    const ranked = rows.slice(0, limit).map((row, i) => ({
+      ...row,
+      rank: i + 1,
+    }));
+
+    res.json({
+      sortBy,
+      ageFilter,
+      total: rows.length,
+      leaderboard: ranked,
+    });
+  } catch (e) { next(e); }
+});
+
 module.exports = router;

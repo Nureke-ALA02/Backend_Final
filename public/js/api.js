@@ -67,6 +67,11 @@
     adminChildren: ({ page = 1 } = {}) =>
                     request(`/admin/children?page=${page}`),
     adminCurriculum: () => request('/admin/curriculum'),
+    adminLeaderboard: ({ sortBy = 'xp', age = null, limit = 100 } = {}) => {
+  const params = new URLSearchParams({ sortBy, limit: String(limit) });
+  if (age) params.set('age', String(age));
+  return request(`/admin/leaderboard?${params.toString()}`);
+},
     adminCreateUnit: (data) => request('/admin/units', { method: 'POST', body: data }),
     adminUpdateUnit: (id, data) => request(`/admin/units/${id}`, { method: 'PUT', body: data }),
     adminDeleteUnit: (id) => request(`/admin/units/${id}`, { method: 'DELETE' }),

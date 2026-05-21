@@ -1,8 +1,8 @@
 /* eslint-env browser */
-/* global API, UI, Views */
+/* global API, UI, Views, Toast */
 (function () {
   const { h } = UI;
-  const AVATARS = ['🦊', '🐻', '🐼', '🦁', '🐸', '🐯', '🐰', '🐰', '🐨'].slice(0, 8);
+  const AVATARS = ['🦊', '🐻', '🐼', '🦁', '🐸', '🐯', '🐰', '🐨'];
   const PIN_RE = /^\d{4}$/;
 
   // ============================================================
@@ -52,7 +52,6 @@
       h('span', { class: 'stat-chip' }, c.hasPin ? '🔒 PIN set' : '⚠️ no PIN'),
     ));
 
-    // Action buttons
     card.appendChild(h('div', { class: 'kid-actions' },
       h('button', {
         class: 'btn btn-ghost kid-action-btn',
@@ -61,20 +60,18 @@
       h('button', {
         class: 'btn btn-ghost kid-action-btn danger',
         onclick: async () => {
-  if (!confirm(`Delete ${c.name}? All progress will be lost.`)) return;
-  try {
-    await API.deleteChild(c.id);
-    Toast.success(`${c.name} removed`);                  // ← добавь
-    location.hash = '';
-    setTimeout(() => { location.hash = '/dashboard'; }, 10);
-  } catch (e) {
-    Toast.error(e.message);                              // ← добавь
-  }
-},
+          if (!confirm(`Delete ${c.name}? All progress will be lost.`)) return;
+          try {
+            await API.deleteChild(c.id);
+            Toast.success(`${c.name} removed`);
+            location.hash = '';
+            setTimeout(() => { location.hash = '/dashboard'; }, 10);
+          } catch (e) {
+            Toast.error(e.message);
+          }
+        },
       }, '🗑 Delete'),
     ));
-
-   
 
     return card;
   }
@@ -82,19 +79,24 @@
   // ============================================================
   // ADD CHILD
   // ============================================================
- function AddChild(go) {
-  return childForm(go, {
-    mode: 'create',
-    title: 'Add a child',
-    sub: 'Pick a name, age, avatar, and optional PIN.',
-    submitLabel: 'Add child',
-    onSubmit: async (data) => {
-  await API.updateChild(childId, data);
-  Toast.success(`${existing.name} updated`);              // ← добавь
-  go('/dashboard');
-},
-  });
-}
+  function AddChild(go) {
+    return childForm(go, {
+      mode: 'create',
+      title: 'Add a child',
+      sub: 'Pick a name, age, avatar, and optional PIN.',
+      submitLabel: 'Add child',
+      onSubmit: async (data) => {
+        const child = await API.createChild(data);
+        Toast.success(`${child.name} added to your family!`);
+        go('/dashboard');
+        return child;
+      },
+    });
+  }
+
+  // ============================================================
+  // EDIT CHILD
+  // ============================================================
   async function EditChild(go, childId) {
     let existing;
     try {
@@ -111,10 +113,15 @@
       initial: existing,
       onSubmit: async (data) => {
         await API.updateChild(childId, data);
+        Toast.success(`${existing.name} updated`);
         go('/dashboard');
       },
     });
   }
+
+  // ============================================================
+  // SHARED FORM
+  // ============================================================
   function childForm(go, opts) {
     const initial = opts.initial || {};
     const errBox = h('div', { class: 'form-error hidden' });

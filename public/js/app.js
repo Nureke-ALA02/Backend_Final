@@ -88,6 +88,11 @@
       const node = await Views.AdminCurriculum(go);
       return appEl.appendChild(node);
     }
+    if (path === '/admin/leaderboard') {
+  if (user.role !== 'ADMIN') return go(homeFor(user));
+  const node = await Views.AdminLeaderboard(go);
+  return appEl.appendChild(node);
+}
 
     if (user.role === 'ADMIN') return go('/admin');
 

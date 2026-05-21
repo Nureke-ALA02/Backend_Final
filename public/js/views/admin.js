@@ -9,21 +9,28 @@
     const childrenPanel = h('div', { class: 'admin-panel' }, h('h2', {}, 'Learners'), h('p', {}, 'Loading…'));
 
     const root = h('section', { class: 'admin-page' },
-      h('div', { class: 'admin-header' },
-        h('div', {},
-          h('h1', {}, 'Admin Panel'),
-          h('p', {}, 'Platform overview and learner progress.'),
-        ),
-        h('div', { style: 'display:flex; gap:10px;' },
-          h('button', {
-            class: 'btn btn-primary',
-            onclick: () => location.hash = '/admin/curriculum',
-          }, '📖 Manage curriculum'),
-        ),
-      ),
-      statsGrid,
-      h('div', { class: 'admin-columns' }, parentsPanel, childrenPanel),
-    );
+  h('div', { class: 'admin-header' },
+    h('div', {},
+      h('h1', {}, 'Admin Panel'),
+      h('p', {}, 'Platform overview and learner progress.'),
+    ),
+
+    h('div', { style: 'display:flex; gap:10px;' },
+      h('button', {
+        class: 'btn btn-ghost',
+        onclick: () => location.hash = '/admin/leaderboard',
+      }, '🏆 Leaderboard'),
+
+      h('button', {
+        class: 'btn btn-primary',
+        onclick: () => location.hash = '/admin/curriculum',
+      }, '📖 Manage curriculum'),
+    ),
+  ),
+
+  statsGrid,
+  h('div', { class: 'admin-columns' }, parentsPanel, childrenPanel),
+);
 
     // Three independent sections — load in parallel so a slow one doesn't block the others.
     loadStats(statsGrid);
