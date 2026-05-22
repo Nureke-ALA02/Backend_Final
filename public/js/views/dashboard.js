@@ -1,13 +1,8 @@
-/* eslint-env browser */
-/* global API, UI, Views, Toast */
 (function () {
   const { h } = UI;
   const AVATARS = ['🦊', '🐻', '🐼', '🦁', '🐸', '🐯', '🐰', '🐨'];
   const PIN_RE = /^\d{4}$/;
 
-  // ============================================================
-  // DASHBOARD
-  // ============================================================
   async function Dashboard(go) {
     const grid = h('div', { class: 'kid-grid' }, h('p', {}, 'Loading…'));
    const root = h('section', { class: 'parent-page' },
@@ -84,9 +79,6 @@
     return card;
   }
 
-  // ============================================================
-  // ADD CHILD
-  // ============================================================
   function AddChild(go) {
     return childForm(go, {
       mode: 'create',
@@ -101,10 +93,6 @@
       },
     });
   }
-
-  // ============================================================
-  // EDIT CHILD
-  // ============================================================
   async function EditChild(go, childId) {
     let existing;
     try {
@@ -126,10 +114,6 @@
       },
     });
   }
-
-  // ============================================================
-  // SHARED FORM
-  // ============================================================
   function childForm(go, opts) {
     const initial = opts.initial || {};
     const errBox = h('div', { class: 'form-error hidden' });

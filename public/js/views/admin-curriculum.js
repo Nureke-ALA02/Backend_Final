@@ -1,5 +1,3 @@
-/* eslint-env browser */
-/* global API, UI, Views */
 (function () {
   const { h } = UI;
 
@@ -45,7 +43,6 @@
     }
   }
 
-  // ---------------- UNIT ----------------
   function unitNode(unit, treeContainer) {
     let expanded = true;
 
@@ -92,7 +89,6 @@
     return wrap;
   }
 
-  // ---------------- LESSON ----------------
   function lessonNode(lesson, treeContainer) {
     let expanded = false;
     const head = h('div', { class: 'tree-head sub', onclick: () => { expanded = !expanded; rerender(); } });
@@ -137,8 +133,6 @@
     rerender();
     return wrap;
   }
-
-  // ---------------- EXERCISE ----------------
   function exerciseNode(ex, treeContainer) {
     const actions = h('div', { class: 'tree-actions' });
     actions.appendChild(h('button', {
@@ -163,10 +157,6 @@
       actions,
     );
   }
-
-  // ============================================================
-  // MODALS
-  // ============================================================
 
   function modal(title, fields, onSave) {
     const errBox = h('div', { class: 'form-error hidden' });
@@ -252,10 +242,10 @@
   ], async (data) => {
     if (isEdit) {
       await API.adminUpdateUnit(existing.id, data);
-      Toast.success(`Unit "${data.title}" updated`);        // ← добавь
+      Toast.success(`Unit "${data.title}" updated`);
     } else {
       await API.adminCreateUnit(data);
-      Toast.success(`Unit "${data.title}" created`);        // ← добавь
+      Toast.success(`Unit "${data.title}" created`);
     }
     onDone();
   });
@@ -269,10 +259,10 @@ function openLessonModal(existing, unitId, onDone) {
   ], async (data) => {
     if (isEdit) {
       await API.adminUpdateLesson(existing.id, data);
-      Toast.success(`Lesson updated`);                       // ← добавь
+      Toast.success(`Lesson updated`);
     } else {
       await API.adminCreateLesson({ ...data, unitId });
-      Toast.success(`Lesson "${data.title}" created`);       // ← добавь
+      Toast.success(`Lesson "${data.title}" created`);
     }
     onDone();
   });
@@ -291,10 +281,10 @@ function openExerciseModal(existing, lessonId, onDone) {
   ], async (data) => {
     if (isEdit) {
       await API.adminUpdateExercise(existing.id, data);
-      Toast.success('Exercise updated');                     // ← добавь
+      Toast.success('Exercise updated');
     } else {
       await API.adminCreateExercise({ ...data, lessonId });
-      Toast.success('Exercise created');                     // ← добавь
+      Toast.success('Exercise created');
     }
     onDone();
   });

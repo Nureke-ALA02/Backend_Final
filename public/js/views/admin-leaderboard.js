@@ -1,12 +1,9 @@
-/* eslint-env browser */
-/* global API, UI, Views */
 (function () {
   const { h } = UI;
 
   async function AdminLeaderboard(go) {
-    // Current filters
     let sortBy = 'xp';
-    let ageFilter = '';   // empty = all ages
+    let ageFilter = '';
 
     const content = h('div', { class: 'leaderboard-content' }, h('p', {}, 'Loading…'));
 
@@ -27,7 +24,6 @@
     function filterBar() {
       const bar = h('div', { class: 'leaderboard-filters' });
 
-      // Sort by
       const sortGroup = h('div', { class: 'filter-group' },
         h('label', {}, 'Sort by:'),
       );
@@ -43,8 +39,6 @@
         sortGroup.appendChild(btn);
       }
       bar.appendChild(sortGroup);
-
-      // Age filter
       const ageGroup = h('div', { class: 'filter-group' },
         h('label', {}, 'Age:'),
       );
@@ -66,7 +60,6 @@
     }
 
     async function reload() {
-      // Re-render filter bar to reflect new active state
       const oldBar = root.querySelector('.leaderboard-filters');
       if (oldBar) oldBar.replaceWith(filterBar());
 
@@ -91,14 +84,11 @@
         ));
         return;
       }
-
-      // Top 3 podium cards
       const top3 = data.leaderboard.slice(0, 3);
       const rest = data.leaderboard.slice(3);
 
       const podium = h('div', { class: 'leaderboard-podium' });
       const medals = ['🥇', '🥈', '🥉'];
-      // Show 2nd, 1st, 3rd visually (1st in middle, raised)
       const order = top3.length === 3 ? [1, 0, 2] : top3.length === 2 ? [1, 0] : [0];
       for (const idx of order) {
         const row = top3[idx];
@@ -106,8 +96,6 @@
         podium.appendChild(podiumCard(row, medals[idx], idx === 0, data.sortBy));
       }
       container.appendChild(podium);
-
-      // Rest table
       if (rest.length > 0) {
         const tbody = h('tbody', {});
         for (const row of rest) {
@@ -160,7 +148,6 @@
         h('div', { class: 'podium-name' }, row.name),
         h('div', { class: 'podium-meta' }, `Age ${row.age} · ${row.parentName}`),
         h('div', { class: 'podium-metric' }, metricLabel),
-        // Secondary stats
         h('div', { class: 'podium-stats' },
           sortBy !== 'xp'     ? h('span', {}, `⭐ ${row.xp}`)        : null,
           sortBy !== 'streak' ? h('span', {}, `🔥 ${row.streak}`)    : null,

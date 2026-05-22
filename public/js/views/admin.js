@@ -1,5 +1,3 @@
-/* eslint-env browser */
-/* global API, UI, Views */
 (function () {
   const { h } = UI;
 
@@ -35,7 +33,6 @@
   h('div', { class: 'admin-columns' }, parentsPanel, childrenPanel),
 );
 
-    // Three independent sections — load in parallel so a slow one doesn't block the others.
     loadStats(statsGrid);
     loadParents(parentsPanel);
     loadChildren(childrenPanel);
@@ -88,10 +85,10 @@
   if (!confirm(`Delete ${p.name} (${p.email}) and all their children? This is permanent.`)) return;
   try {
     await API.adminDeleteParent(p.id);
-    Toast.success(`${p.name} deleted`);                      // ← добавь
+    Toast.success(`${p.name} deleted`);
     loadParents(container);
   } catch (e) {
-    Toast.error(e.message);                                  // ← замени alert
+    Toast.error(e.message);
   }
 },
         }, '🗑');

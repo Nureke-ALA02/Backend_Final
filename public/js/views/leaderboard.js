@@ -1,5 +1,3 @@
-/* eslint-env browser */
-/* global API, UI, Views */
 (function () {
   const { h } = UI;
 
@@ -7,7 +5,6 @@
     let sortBy = 'xp';
     let ageFilter = '';
 
-    // Auto-pick age if parent has children
     try {
       const me = await API.me();
       if (me.role === 'PARENT') {
@@ -99,7 +96,6 @@
         return;
       }
 
-      // Top-3 podium
       const top3 = data.leaderboard.slice(0, 3);
       const rest = data.leaderboard.slice(3);
 

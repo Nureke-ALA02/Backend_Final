@@ -1,5 +1,3 @@
-/* eslint-env browser */
-/* global API, UI, Views, Toast */
 (function () {
   const { h } = UI;
 
@@ -28,8 +26,6 @@
     }
 
     root.innerHTML = '';
-
-    // ---- form fields ----
     const errBox = h('div', { class: 'form-error hidden' });
     const okBox  = h('div', { class: 'form-success hidden' });
 
@@ -70,10 +66,8 @@
         const updated = await API.updateParent(me.id, data);
         profile = updated;
         Toast.success('Profile updated!');
-        // Reset password fields
         currentPwIn.value = '';
         newPwIn.value = '';
-        // Update the topbar name immediately
         const topName = document.getElementById('parent-name');
         if (topName) topName.textContent = `Hi, ${updated.name}`;
       } catch (e) {

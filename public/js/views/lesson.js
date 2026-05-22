@@ -42,7 +42,7 @@
       feedbackEl.className = 'feedback';
       nextBtn.disabled = true;
 
-      // Prisma returns enum types in uppercase ('VOCABULARY'). Compare case-insensitively.
+      
       const isVocab = String(ex.type).toLowerCase() === 'vocabulary';
 
       for (const opt of ex.options) {

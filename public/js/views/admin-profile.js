@@ -1,5 +1,3 @@
-/* eslint-env browser */
-/* global API, UI, Views, Toast */
 (function () {
   const { h } = UI;
 
@@ -60,7 +58,6 @@
         Toast.success('Profile updated!');
         currPwIn.value = '';
         newPwIn.value  = '';
-        // Update topbar name
         const topName = document.getElementById('parent-name');
         if (topName) topName.textContent = `${updated.name} (admin)`;
       } catch (e) {
@@ -71,8 +68,6 @@
         saveBtn.textContent = 'Save changes';
       }
     }
-
-    // Stats cards (reuse admin numbers)
     const statsBlock = stats ? h('div', { class: 'admin-profile-stats' },
       statCard('👨‍👩‍👧', 'Parents', stats.totals.parents),
       statCard('🧒', 'Learners', stats.totals.children),

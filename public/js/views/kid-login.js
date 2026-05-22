@@ -149,7 +149,7 @@
    async function doLogin(pin) {
   const { token, child } = await API.childLogin(chosenChild.id, pin);
   API.Auth.token = token;
-  Toast.success(`Hi, ${child.name}! Ready to learn?`);    // ← добавь
+  Toast.success(`Hi, ${child.name}! Ready to learn?`);
   onAuth({ ...child, role: 'CHILD' });
 }
 

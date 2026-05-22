@@ -52,7 +52,7 @@
     updateChild:   (id, data) => request(`/children/${id}`, { method: 'PUT', body: data }),
     deleteChild:   (id) => request(`/children/${id}`, { method: 'DELETE' }),
     getChild:      (id) => request(`/children/${id}`),
-    // ---- PARENT PROFILE ----
+    
 getParent:    (id) => request(`/parents/${id}`),
 updateParent: (id, data) => request(`/parents/${id}`, { method: 'PUT', body: data }),
 
